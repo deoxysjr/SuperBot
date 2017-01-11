@@ -1,4 +1,4 @@
-﻿using Discord;
+using Discord;
 using Discord.Commands;
 using Discord.Modules;
 using System;
@@ -27,15 +27,6 @@ namespace Superbot
         public MyBot()
         {
             rand = new Random();
-
-            Hentai = new string[]
-            {
-                "http://soft-hentai.com/images/hentai/p41/lesbian-yuri-hentai-uncensored-licking-pussy-cum-to-love-ru-darkness.jpeg",
-                "http://67.media.tumblr.com/7c39dbd7c7238ac964dfce3b2a90c0e6/tumblr_nr9695w6rB1ut6wtdo1_1280.jpg",
-                "",
-                "",
-                ""
-            };
 
             music = new string[]
             {
@@ -66,7 +57,7 @@ namespace Superbot
                 "afbeeldingen/afbeelding8.jpg"  //7
             };
 
-            boobs = new string[]
+            oppai = new string[]
             {
                 "Boobs/boobs 1.jpg", //0
                 "Boobs/boobs 2.jpg", //1
@@ -96,7 +87,7 @@ namespace Superbot
 
             discord.ExecuteAndWait(async () =>
             {
-                await discord.Connect("MjU3MTMwNTIxMzU4ODkzMDU3.Cy2VZw.4SOsIf1wAj_d89Bpt2_154ac_hk", TokenType.Bot);
+                await discord.Connect("Token", TokenType.Bot);
             });
 
             discord.UserBanned += async (s, e) => //banned
@@ -123,9 +114,9 @@ namespace Superbot
             commands.CreateCommand("oppai")
                 .Do(async (e) =>
                 {
-                    int randomBoobIndex = rand.Next(boobs.Length);
-                    string memeToPost = boobs[randomBoobIndex];
-                    await e.Channel.SendFile(memeToPost);
+                    int randomOppaiIndex = rand.Next(oppai.Length);
+                    string oppaiToPost = oppai[randomoppaiIndex];
+                    await e.Channel.SendFile(oppaiToPost);
                 });
         }
 
