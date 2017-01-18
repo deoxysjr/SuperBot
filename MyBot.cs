@@ -17,7 +17,8 @@ namespace Superbot
         CommandService commands;
 
         Random rand;
-
+        
+        string[] randGameIndex;
         string[] lol;
         string[] picture;
         string[] music;
@@ -25,6 +26,11 @@ namespace Superbot
         public MyBot()
         {
             rand = new Random();
+            
+            randGameIndex = new string[]
+            {
+                "test"
+            };
 
             music = new string[]
             {
@@ -78,6 +84,15 @@ namespace Superbot
             {
                 await discord.Connect("Token", TokenType.Bot);
             });
+            
+            commands.CreateCommand("Playing")
+                .Do(async (e) =>
+                {
+                    int randGame = rand.Next(randGameIndex.Length);
+                    string message = randGameIndex[randGame];
+                    await e.Channel.SendMessage("Now playing" + message);
+                    discord.SetGame(message);
+                });
 
             discord.UserBanned += async (s, e) => //banned
             {
