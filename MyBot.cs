@@ -57,15 +57,6 @@ namespace Superbot
                 "afbeeldingen/afbeelding8.jpg"  //7
             };
 
-            oppai = new string[]
-            {
-                "Boobs/boobs 1.jpg", //0
-                "Boobs/boobs 2.jpg", //1
-                "Boobs/boobs 3.jpg", //2
-                "Boobs/boobs 4.jpg", //3
-                "Boobs/boobs 5.jpg"  //4
-            };
-
             discord = new DiscordClient(x =>
             {
                 x.LogLevel = LogSeverity.Info;
@@ -111,13 +102,7 @@ namespace Superbot
 
         private void RegisterMemeCommand()
         {
-            commands.CreateCommand("oppai")
-                .Do(async (e) =>
-                {
-                    int randomOppaiIndex = rand.Next(oppai.Length);
-                    string oppaiToPost = oppai[randomoppaiIndex];
-                    await e.Channel.SendFile(oppaiToPost);
-                });
+            
         }
 
         private void RegisterClearCommand()
