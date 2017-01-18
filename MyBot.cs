@@ -20,9 +20,7 @@ namespace Superbot
 
         string[] lol;
         string[] picture;
-        string[] boobs;
         string[] music;
-        string[] Hentai;
 
         public MyBot()
         {
