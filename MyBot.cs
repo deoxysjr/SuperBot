@@ -234,17 +234,33 @@ namespace Superbot
                 {
                     var helpList = new List<string>();
 
-                    helpList.Add("```erlang");
+                    helpList.Add("```");
                     helpList.Add("The prefix = %");
+                    helpList.Add("%help 1 = commands");
+                    helpList.Add("%help 2 = info");
+                    helpList.Add("%help 3 = admin");
+                    helpList.Add("%help 4 = ?");
+                    helpList.Add("%help 5 = ?");
+                    helpList.Add("```");
+
+                    await e.User.SendMessage(string.Join("\n", helpList));
+                });
+            
+            commands.CreateCommand("help 1")
+                .Alias("h 1")
+                .Do(async (e) =>
+                {
+                    var helpList = new List<string>();
+                    
+                    helpList.Add("```");
+                    helpList.Add("");
                     helpList.Add("");
                     helpList.Add("");
                     helpList.Add("");
                     helpList.Add("");
                     helpList.Add("");
                     helpList.Add("```");
-
-                    await e.User.SendMessage(string.Join("\n", helpList));
-                });
+                }
 
             commands.CreateCommand("nice")
                 .Do(async (e) =>
