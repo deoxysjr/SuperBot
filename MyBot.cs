@@ -8,29 +8,30 @@ using System.Linq;
 using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
+using System.Timers;
 
 namespace Superbot
 {
     class MyBot
-    { 
+    {
         DiscordClient discord;
         CommandService commands;
 
         Random rand;
-        
-        string[] randGameIndex;
+
         string[] lol;
         string[] picture;
         string[] music;
 
+        public static string commandPrefix = "%";
+        public static int CommandsUsed = 0;
+        public static DateTime MessageSent;
+        public static DateTime StartupTime = DateTime.Now;
+        public static int gpsCooldownInt = 0;
+
         public MyBot()
         {
             rand = new Random();
-            
-            randGameIndex = new string[]
-            {
-                "test"
-            };
 
             music = new string[]
             {
@@ -71,51 +72,63 @@ namespace Superbot
             {
                 x.PrefixChar = '%';
                 x.AllowMentionPrefix = true;
+                //x.HelpMode = HelpMode.Public;
             });
 
             commands = discord.GetService<CommandService>();
 
-            RegisterMemeCommand();
             RegisterClearCommand();
             ReristerPictureCommand();
             Commands();
+            Help();
 
             discord.ExecuteAndWait(async () =>
             {
-                await discord.Connect("Token", TokenType.Bot);
-            });
-            
-            commands.CreateCommand("Playing")
-                .Do(async (e) =>
+                while (true)
                 {
-                    int randGame = rand.Next(randGameIndex.Length);
-                    string message = randGameIndex[randGame];
-                    await e.Channel.SendMessage("Now playing" + message);
-                    discord.SetGame(message);
-                });
+                    await discord.Connect("token", TokenType.Bot);
+                    Console.WriteLine("Bot connected correctly");
+                    discord.SetGame("%help for commands");
+                    commands.CreateCommand("Playing")
+                        .Alias(new string[] { "play" })
+                        .Parameter("text", ParameterType.Unparsed)
+                        .Do(async (e) =>
+                        {
+                            string text = e.Args[0];
+                            await e.Channel.SendMessage("Your bot is now playing: " + text);
+                            discord.SetGame(text);
+                        });
+                    break;
+                }
+            });
 
-            discord.UserBanned += async (s, e) => //banned
+            discord.UserLeft += async (s, e) =>
             {
-                var logChannel = e.Server.FindChannels("#logs").FirstOrDefault();
-                await logChannel.SendMessage($"User Banned: {e.User.Name}");
+                var channel = e.Server.FindChannels("log", ChannelType.Text).FirstOrDefault();
+
+                var user = e.User;
+
+                await channel.SendMessage(string.Format("{0} has left the channel!", user.Name));
             };
 
-            discord.UserUnbanned += async (s, e) => //banned
+            discord.UserBanned += async (s, e) =>
             {
-                var logChannel = e.Server.FindChannels("logs").FirstOrDefault();
-                await logChannel.SendMessage($"User UnBanned: {e.User.Name}");
+                var channel = e.Server.FindChannels("log", ChannelType.Text).FirstOrDefault();
+
+                var user = e.User;
+
+                await channel.SendMessage(string.Format("{0} is banned from the channel!", user.Name));
             };
 
-            discord.UserLeft += async (s, e) => //left or kickt
+            discord.UserUnbanned += async (s, e) =>
             {
-                var logChannel = e.Server.FindChannels("logs").FirstOrDefault();
-                await logChannel.SendMessage($"User left or kickt: {e.User.Name}");
-            };
-        }
+                var channel = e.Server.FindChannels("log", ChannelType.Text).FirstOrDefault();
 
-        private void RegisterMemeCommand()
-        {
-            
+                var user = e.User;
+                
+                await channel.SendMessage(string.Format("{0} is unbanned from the channel!", user.Name));
+            };
+
         }
 
         private void RegisterClearCommand()
@@ -164,7 +177,7 @@ namespace Superbot
                 .Do(async (e) =>
                 {
                     await e.Channel.SendMessage("hi!");
-                });
+                });            
 
             commands.CreateCommand("dead")
                 .Alias(new string[] { ":skull_crossbones:" })
@@ -225,16 +238,28 @@ namespace Superbot
                     await e.User.SendMessage("%hello - hi!");
                     await e.User.SendMessage("%bye bye - bye");
                     await e.User.SendMessage("%clear - clears 100 messages");
-                    await e.User.SendMessage("%dead - :skull_crossbones:dead:skull_crossbones:");
+                    await e.User.SendMessage("%dead - :skull_crossbones::dead::skull_crossbones:");
                 });
 
-            commands.CreateCommand("help")
-                .Alias(new string[] {"h"})
+            commands.CreateCommand("say")
+                .Description("Make the bot say something")
+                .Alias("s")
+                .Parameter("text", ParameterType.Unparsed)
                 .Do(async (e) =>
                 {
+                    string text = e.Args[0];
+                    await e.Channel.SendMessage(text);
+                });
+
+            /*commands.CreateCommand("help")
+                .Alias(new string[] { "h" })
+                .Do(async (e) =>
+                {
+                    var name = e.User.Nickname != null ? e.User.Nickname : e.User.Name;
+
                     var helpList = new List<string>();
 
-                    helpList.Add("```");
+                    helpList.Add("```erlang");
                     helpList.Add("The prefix = %");
                     helpList.Add("%help 1 = commands");
                     helpList.Add("%help 2 = info");
@@ -243,33 +268,47 @@ namespace Superbot
                     helpList.Add("%help 5 = ?");
                     helpList.Add("```");
 
+                    await e.Channel.SendMessage(name + " look in you inbox");
                     await e.User.SendMessage(string.Join("\n", helpList));
                 });
-            
+
             commands.CreateCommand("help 1")
-                .Alias("h 1")
+                .Alias(new string[] { "h 1" })
                 .Do(async (e) =>
                 {
                     var helpList = new List<string>();
-                    
+
+                    helpList.Add("```erlang");
+                    helpList.Add("%help - help");
+                    helpList.Add("%say - let the bot say someting");
+                    helpList.Add("%hello - hi!");
+                    helpList.Add("%bye bye - bye");
+                    helpList.Add("%dead - :skull_crossbones::dead::skull_crossbones:");
+                    helpList.Add("%nice - lol");
                     helpList.Add("```");
-                    helpList.Add("");
-                    helpList.Add("");
-                    helpList.Add("");
-                    helpList.Add("");
-                    helpList.Add("");
-                    helpList.Add("");
-                    helpList.Add("```");
-                }
+
+                    await e.User.SendMessage(string.Join("\n", helpList));
+                });*/
 
             commands.CreateCommand("nice")
                 .Do(async (e) =>
                 {
+                    var lol = new List<string>();
+
+                    lol.Add("``");
+                    lol.Add("lol");
+                    lol.Add("lol");
+                    lol.Add("lol");
+                    lol.Add("lol");
+                    lol.Add("lol");
+                    lol.Add("lol");
+                    lol.Add("lol");
+                    lol.Add("lol");
+                    lol.Add("lol");
+                    lol.Add("``");
+
                     await e.Channel.SendMessage("lol");
-                    await e.User.SendMessage("lol");
-                    await e.User.SendMessage("lol");
-                    await e.User.SendMessage("lol");
-                    await e.User.SendMessage("lol");
+                    await e.User.SendMessage(string.Join("\n", lol));
                 });
 
             commands.CreateCommand("serverinfo")
@@ -295,11 +334,11 @@ namespace Superbot
                     });
 
             commands.CreateCommand("userinfo")
-                    .Description("Get info about the (optionally) specified user.")
-                    .Parameter("user", ParameterType.Unparsed)
-                    .Do(async e =>
+                .Description("Get info about the (optionally) specified user.")
+                .Parameter("user", ParameterType.Unparsed)
+                .Do(async e =>
                     {
-                    var userRoles = e.User.Roles;
+                        var userRoles = e.User.Roles;
 
                         if (userRoles.Any(input => input.Name.ToUpper() == "ADMIN"))
                         {
@@ -370,8 +409,202 @@ namespace Superbot
                             await e.Channel.SendMessage("You don't have the admin permission for this command!");
                         }
                     });
-                    
-                }
+            
+            commands.CreateCommand("ping")
+                .Do(async (e) =>
+                {
+                    var ping = e.Message.Timestamp - MessageSent;
+                    await e.Channel.SendMessage($"Responded in " + (ping.Seconds) + "." + (ping.Milliseconds) + " seconds.");
+                });
+
+            commands.CreateCommand("uptime")
+                .Do(async (e) =>
+                {
+                await e.Channel.SendMessage($"the bot is now {DateTime.Now - StartupTime} active");
+                });
+
+            commands.CreateCommand("roll")
+                .Description("Rolls a die.")
+                .Parameter("number", ParameterType.Optional)
+                .Do(async e =>
+                {
+                    CommandsUsed++;
+                    if (e.Message.Text.Contains($"{commandPrefix}roll "))
+                    {
+                        if (e.Message.Text.ToLower() == $"{commandPrefix}roll 10")
+                        {
+                            int dice = rand.Next(1, 11);
+                            await e.Channel.SendMessage($"The ten-sided die rolled a... {dice}!");
+                        }
+                        else if (e.Message.Text.ToLower() == $"{commandPrefix}roll 1")
+                            await e.Channel.SendMessage($"The one-sided die rolled a... one! Wow, surprising!");
+                        else if (e.Message.Text.ToLower() == $"{commandPrefix}roll 2")
+                        {
+                            int dice = rand.Next(1, 3);
+                            await e.Channel.SendMessage($"The two-sided die rolled a... {dice}!");
+                        }
+                        else if (e.Message.Text.ToLower() == $"{commandPrefix}roll 3")
+                        {
+                            int dice = rand.Next(1, 4);
+                            await e.Channel.SendMessage($"The three-sided die rolled a... {dice}!");
+                        }
+                        else if (e.Message.Text.ToLower() == $"{commandPrefix}roll 4")
+                        {
+                            int dice = rand.Next(1, 5);
+                            await e.Channel.SendMessage($"The four-sided die rolled a... {dice}!");
+                        }
+                        else if (e.Message.Text.ToLower() == $"{commandPrefix}roll 5")
+                        {
+                            int dice = rand.Next(1, 6);
+                            await e.Channel.SendMessage($"The five-sided die rolled a... {dice}!");
+                        }
+                        else if (e.Message.Text.ToLower() == $"{commandPrefix}roll 6")
+                        {
+                            int dice = rand.Next(1, 7);
+                            await e.Channel.SendMessage($"The six-sided die rolled a... {dice}!");
+                        }
+                        else if (e.Message.Text.ToLower() == $"{commandPrefix}roll 7")
+                        {
+                            int dice = rand.Next(1, 8);
+                            await e.Channel.SendMessage($"The seven-sided die rolled a... {dice}!");
+                        }
+                        else if (e.Message.Text.ToLower() == $"{commandPrefix}roll 8")
+                        {
+                            int dice = rand.Next(1, 9);
+                            await e.Channel.SendMessage($"The eight-sided die rolled a... {dice}!");
+                        }
+                        else if (e.Message.Text.ToLower() == $"{commandPrefix}roll 9")
+                        {
+                            int dice = rand.Next(1, 10);
+                            await e.Channel.SendMessage($"The nine-sided die rolled a... {dice}!");
+                        }
+                        //d10 is up above because reasons
+                        else if (e.Message.Text.ToLower() == $"{commandPrefix}roll 11")
+                        {
+                            int dice = rand.Next(1, 12);
+                            await e.Channel.SendMessage($"The eleven-sided die rolled a... {dice}!");
+                        }
+                        else if (e.Message.Text.ToLower() == $"{commandPrefix}roll 12")
+                        {
+                            int dice = rand.Next(1, 13);
+                            await e.Channel.SendMessage($"The twelve-sided die rolled a... {dice}!");
+                        }
+                        else
+                            await e.Channel.SendMessage($"You must pick a number between 1 and 12!");
+                    }
+                    else
+                    {
+                        int dice = rand.Next(1, 7);
+                        await e.Channel.SendMessage($"The six-sided die rolled a... {dice}!");
+                    }
+                });
+
+            commands.CreateCommand("gps")
+                .Description("The GPS rant™")
+                .Do(async e =>
+                {
+                    CommandsUsed++;
+                    if (gpsCooldownInt == 0)
+                    {
+                        gpsCooldownInt = 15;
+                        Timer gpsCooldownTimer = new Timer();
+                        gpsCooldownTimer.Elapsed += new ElapsedEventHandler(gpsCooldown);
+                        gpsCooldownTimer.Interval = 1000;
+                        gpsCooldownTimer.Enabled = true;
+                        await e.Channel.SendMessage($"ᵂᵃᶦᵗ, ᵗʰᶦˢ ᶦˢ ᵃ ˢᵉʳᶦᵒᵘˢ ᶦˢˢᵘᵉ⋅ ᴸᵉᵗ ᵐᵉ ʳᵃᶰᵗ ᵃᵇᵒᵘᵗ ᶦᵗ ᶠᵒʳ ᵃ ᵇᶦᵗ⋅ ﹡ᵃᶜʰᵉᵐ﹡⋅ \nᵂʰᵃᵗ ᶦˢ ᵃ ᴳᴾˢ﹖\nᵀʰᵉ ᴳᴾˢ ᶦˢ ᵃ ˢʸˢᵗᵉᵐ ᵗᵒ ᵉˢᵗᶦᵐᵃᵗᵉ ᶫᵒᶜᵃᵗᶦᵒᶰ ᵒᶰ ᵉᵃʳᵗʰ ᵇʸ ᵘˢᶦᶰᵍ ˢᶦᵍᶰᵃᶫˢ ᶠʳᵒᵐ ᵃ ˢᵉᵗ ᵒᶠ ᵒʳᵇᶦᵗᶦᶰᵍ ˢᵃᵗᵉᶫᶫᶦᵗᵉˢ… ᵒʳ ˢᵒ ᵗʰᵉʸ ˢᵃʸ⋅ ᴮᵘᵗ ʷʰᵃᵗ ᵗʰᵉʸ'ʳᵉ ᶰᵒᵗ ᵗᵉᶫᶫᶦᶰᵍ ᵘˢ ᶦˢ ᵗʰᵉ ʰᵃʳᵐ ᶦᵗ ᶜᵒᶰˢᵗᵃᶰᵗᶫʸ ᶜᵃᵘˢᵉˢ ʷᵒʳᶫᵈʷᶦᵈᵉ ᵉᵛᵉʳʸ ᵈᵃʸ⋅ ᴿᵉᶜᵉᶰᵗᶫʸ, ˢᵃᵗᵉᶫᶫᶦᵗᵉˢ ʰᵃᵛᵉ ᵇᵉᵉᶰ ᵇᵉᶦᶰᵍ ᵈᵉˢᶦᵍᶰᵉᵈ ˢᵒᶫᵉᶫʸ ᶠᵒʳ ᵗʰᵉ ᵖᵘʳᵖᵒˢᵉ ᵒᶠ ᵇᵒᵒˢᵗᶦᶰᵍ ᴳᴾˢ ᵖᵉʳᶠᵒʳᵐᵃᶰᶜᵉ, ᵇᵘᵗ ᵗʰᵉʸ ʰᵃᵛᵉ ᵇᵉᵉᶰ ᵇᵘᶦᶫᵗ ʷᶦᵗʰ ˢᵒ ᶫᶦᵗᵗᶫᵉ ᶜᵃʳᵉ ᵗʰᵃᵗ ᵗʰᵉ ᵖʳᵒᵇᶫᵉᵐˢ ᵃʳᵉ ᵉᵛᵉᶰ ʷᵒʳˢᵉ, ᵍᶦᵛᵉᶰ ᵗʰᵃᵗ ᵗʰᵉʸ ᵃʳᵉᶰ'ᵗ ʳᵉᶫʸᶦᶰᵍ ᵒᶰ ᶫᵃʳᵍᵉʳ ᵗʰᶦʳᵈ ᵖᵃʳᵗʸ ˢᵃᵗᵉᶫᶫᶦᵗᵉˢ ᵃᶰʸᵐᵒʳᵉ⋅ ᴺᵒᵗ ᵒᶰᶫʸ ᶦˢ ᵗʰᵉ ᶰᵃᵛᶦᵍᵃᵗᶦᵒᶰ ʷᵒʳˢᵉ, ᵇᵘᵗ ᶦᵗ’ˢ ᵃᶫˢᵒ ʰᵃʳᵐᶦᶰᵍ ᵒᵘʳ ᵒᵘᵗ⁻ᵒᶠ⁻ᵒʳᵇᶦᵗ ᵉᶰᵛᶦʳᵒᶰᵐᵉᶰᵗ⋅ ˢᵖᵃᶜᵉ ᵈᵉᵇʳᶦˢ ʰᵃˢ ᵇᵉᵉᶰ ᵃ ᵖʳᵒᵇᶫᵉᵐ ᵉᵛᵉʳ ˢᶦᶰᶜᵉ ʷᵉ ˢᵗᵃʳᵗᵉᵈ ᶫᵃᵘᶰᶜʰᶦᶰᵍ ˢᵃᵗᵉᶫᶫᶦᵗᵉˢ ᶦᶰᵗᵒ ˢᵖᵃᶜᵉ, ᵒᶠ ᶜᵒᵘʳˢᵉ, ᵇᵘᵗ⋅⋅ ᵂᶦᵗʰ ᶰᵉʷ ‘ʲᵃᶰᶦᵗᵒʳ’ ˢᵃᵗᵉᶫᶫᶦᵗᵉˢ ᵃᶰᵈ ᶫᵃˢᵉʳ ᵗᵉᶜʰᶰᵒᶫᵒᵍʸ, ʷᵉ’ᵛᵉ ᵇᵉᵉᶰ ᵃᵇᶫᵉ ᵗᵒ ᵏᵉᵉᵖ ᵗʰᵃᵗ ᵘᶰᵈᵉʳ ᶜᵒᶰᵗʳᵒᶫ⋅ ᴮᵘᵗ ʷʰᶦᶫᵉ ᵗʰᵉ ᵒᵛᵉʳᵃᶫᶫ ᵇᵘᶦᶫᵈ ᶠᵒʳ ˢᵃᵗᵉᶫᶫᶦᵗᵉˢ ᵃʳᵉ ᵘˢᵘᵃᶫᶫʸ ˢᵗᵘʳᵈʸ ᵉᶰᵒᵘᵍʰ ᵗᵒ ʷᶦᵗʰˢᵗᵃᶰᵈ ˢᵖᵃᶜᶦᵒᵘˢ ᶜᵒᶰᵈᶦᵗᶦᵒᶰˢ ᶠᵒʳ ᵃ ᶫᵉᶰᵍᵗʰʸ ᵃᵐᵒᵘᶰᵗ ᵒᶠ ᵗᶦᵐᵉ, ᵗʰᵉˢᵉ ᴳᴾˢ ˢᵃᵗᵉᶫᶫᶦᵗᵉˢ ᵃʳᵉ ʲᵘˢᵗ ᶫᵃᵘᶰᶜʰᶦᶰᵍ ᵖᶦᵉᶜᵉˢ ᵒᶠ ᵗʰᵉᶦʳ ᵒʷᶰ ᵈᵉᵇʳᶦˢ ᶦᶰᵗᵒ ˢᵖᵃᶜᵉ﹔ ˢᵗᶦᶫᶫ ᶦᶰ ᵒᵘʳ ᵒʳᵇᶦᵗ ᵇᵘᵗ ᵒᵘᵗ ᵒᶠ ᵒᵘʳ ᵃᵗᵐᵒˢᵖʰᵉʳᵉ, ʷʰᶦᶜʰ ᶦˢ ᵗᵃᵏᶦᶰᵍ ᵘˢ ᵃᵗ ᶫᵉᵃˢᵗ ᵗᵉᶰ ʸᵉᵃʳˢ ᵇᵃᶜᵏ ᶦᶰ ᵗᵉʳᵐˢ ᵒᶠ ˢᵖᵃᶜᵉ ᵗᵉᶜʰᶰᵒᶫᵒᵍʸ ᵈᵉᵛᵉᶫᵒᵖᵐᵉᶰᵗ⋅ ᴺᵒᵗ ᵒᶰᶫʸ ᵗʰᵃᵗ, ᵇᵘᵗ ᵗʰᵉ ᵐᵃᶦᶰ ᵖʳᵒᵇᶫᵉᵐ ʷᶦᵗʰ ˢᵖᵃᶜᵉ ᵈᵉᵇʳᶦˢ ᶦᶰ ᵍᵉᶰᵉʳᵃᶫ ᶦˢ ᵗʰᵃᵗ ᶦᵗ ᶦˢ ᶜᵃᵘˢᶦᶰᵍ ᵉˣᵗʳᵉᵐᵉ ᶫᵉᵛᵉᶫˢ ᵒᶠ ᶜᵒᶫᶫᶦˢᶦᵒᶰ ʷᶦᵗʰ ᵒᵗʰᵉʳ ᵛᶦᵗᵃᶫ ᵃᶰᵈ ᵉˣᵖᵉᶰˢᶦᵛᵉ ˢᵃᵗᵉᶫᶫᶦᵗᵉˢ ᵗʰᵃᵗ ᵃʳᵉ ᵘˢᵉᵈ ᶠᵒʳ ᶦᵐᵖᵒʳᵗᵃᶰᵗ ᵃᶰᵈ ᶦᶰ ᵍᵉᶰᵉʳᵃᶫ ʰᵃᵛᵉ ᵃ ˢʷᵉᶫᶫ ᶦᶰᵗᵉᶰᵗᶦᵒᶰ ᵍᵒᶦᶰᵍ ᵇʸ ᵗʰᵉᶦʳ ᵃᶜᵗᶦᵛᶦᵗᶦᵉˢ⋅ ᵀʰᵉʳᵉᶠᵒʳᵉ ᵗʰᵉˢᵉ ᴳᴾˢ ˢᵃᵗᵉᶫᶫᶦᵗᵉˢ, ʷʰᶦᶫᵉ ᵃᶫʳᵉᵃᵈʸ ᵇᵉᶦᶰᵍ ᵃᵇʰᵒʳʳᵉᶰᵗ ᵉᶰᵒᵘᵍʰ, ᵃʳᵉ ʳᵉᵈᵘᶜᶦᶰᵍ ᵗʰᵉ ᑫᵘᵃᶫᶦᵗʸ ᵒᶠ ˢᵃᵗᵉᶫᶫᶦᵗᵉˢ ᵃᶜᵗᵘᵃᶫᶫʸ ᵐᵃᵈᵉ ʷᶦᵗʰ ᵃ ˢᶦᶰᵍᶫᵉ ᵒᵘᶰᶜᵉ ᵒᶠ ᶦᶰᵗᵉᵍʳᶦᵗʸ﹗ ᵀʰᵉʸ ᵃʳᵉ ᵐᵃᵏᶦᶰᵍ ᶫᶦᶠᵉ ʷᵒʳˢᵉ ᶠᵒʳ ᵉᵛᵉʳʸ ˢᶦᶰᵍᶫᵉ ᵖᵉʳˢᵒᶰ ᵘˢᶦᶰᵍ ᵃ ˢᵉʳᵛᶦᶜᵉ ᵖʳᵒᵛᶦᵈᵉᵈ ᵇʸ ᵃᶰʸ ᵒᶠ ᵗʰᵉˢᵉ ˢᵃᵗᵉᶫᶫᶦᵗᵉˢ ᵗʰᵃᵗ ʷᵉʳᵉ ᶦᶰ ᶜᵒᶰᵗᵃᶜᵗ ʷᶦᵗʰ ᵗʰᵉᵐ⋅ ᴵ ˢᶦᵐᵖᶫᵉ ᶜᵃᶰ’ᵗ ᵘᶰᵈᵉʳˢᵗᵃᶰᵈ ʰᵒʷ ʷᵉ ᶜᵃᶰ ᵗᵒᶫᵉʳᵃᵗᵉ ᵗʰᵉˢᵉ ᵖᵉᵒᵖᶫᵉ⋅ ᴬᶫʳᶦᵍʰᵗ, ᶫᵉᵗ’ˢ ᵍᵉᵗ ᵇᵃᶜᵏ ᵗᵒ ᵗʰᵉ ᶰᶦᵗᵗʸ ᵍʳᶦᵗᵗʸ ᵒᶠ ᵗʰᶦˢ ᵗʰᶦᶰᵍ⋅ ᴬˢ ᴵ ʷᵃˢ ˢᵃʸᶦᶰᵍ ᵉᵃʳᶫᶦᵉʳ, ᶜᵒᶫᶫᶦˢᶦᵒᶰˢ ᵈᵉˢᵗʳᵒʸᵉᵈ ᵇᵒᵗʰ ˢᵃᵗᵉᶫᶫᶦᵗᵉˢ ᵃᶰᵈ ᵗʰᵒˢᵉ ᵗʰᵃᵗ ʰᵃᵈ ᶜʳᵉᵃᵗᵉᵈ ᵃ ᶠᶦᵉᶫᵈ ᵒᶠ ᵈᵉᵇʳᶦˢ ᵗʰᵃᵗ ᵇᵉᶜᵒᵐᵉ ᵃ ᵈᵃᶰᵍᵉʳ ᵗᵒ ᵒᵗʰᵉʳ […]");
+                    }
+                    else
+                        await e.Channel.SendMessage($"This command is currently on a cooldown. Please try again in {gpsCooldownInt} seconds.");
+                });
+        }
+
+        private void Help()
+        {
+            commands.CreateGroup("help", cgb =>
+            {
+                cgb.CreateCommand("")
+                .Alias(new string[] {""})
+                .Do(async (e) =>
+                {
+                    var name = e.User.Nickname != null ? e.User.Nickname : e.User.Name;
+
+                    var helpList = new List<string>();
+
+                    helpList.Add("```");
+                    helpList.Add("The prefix = %");
+                    helpList.Add("%help 1 = commands");
+                    helpList.Add("%help 2 = info");
+                    helpList.Add("%help 3 = admin");
+                    helpList.Add("%help 4 = ?");
+                    helpList.Add("%help 5 = ?");
+                    helpList.Add("```");
+
+                    await e.Channel.SendMessage(name + " look in you inbox");
+                    await e.User.SendMessage(string.Join("\n", helpList));
+                });
+
+                cgb.CreateCommand("1")
+                    .Alias(new string[] { "1" })
+                    .Do(async (e) =>
+                    {
+                        var helpList = new List<string>();
+
+                        helpList.Add("```");
+                        helpList.Add("This is the list of Commands");
+                        helpList.Add(" ");
+                        helpList.Add("%help - help");
+                        helpList.Add("%say - let the bot say someting");
+                        helpList.Add("%hello - hi!");
+                        helpList.Add("%bye bye - bye");
+                        helpList.Add("%dead - :skull_crossbones::dead::skull_crossbones:");
+                        helpList.Add("%nice - lol");
+                        helpList.Add("%roll + number up to 12 - roles a random number");
+                        helpList.Add("```");
+
+                        await e.User.SendMessage(string.Join("\n", helpList));
+                    });
+
+                cgb.CreateCommand("2")
+                    .Alias(new string[] { "2" })
+                    .Do(async (e) =>
+                    {
+                        var helpList = new List<string>();
+
+                        helpList.Add("```");
+                        helpList.Add("This is the list of info Commands");
+                        helpList.Add(" ");
+                        helpList.Add("%serverinfo - gives info about the server");
+                        helpList.Add("%userinfo @user - gives info about a user in the server");
+                        helpList.Add("%ping - test respond time");
+                        helpList.Add("%uptime - says the time the bot is active");
+                        helpList.Add("```");
+
+                        await e.User.SendMessage(string.Join("\n", helpList));
+                    });
+
+                cgb.CreateCommand("3")
+                .Alias(new string[] { "3" })
+                .Do(async (e) =>
+                {
+                    var helpList = new List<string>();
+
+                    helpList.Add("```");
+                    helpList.Add("This is the of the admin commands");
+                    helpList.Add(" ");
+                    helpList.Add("%playing + game - sets the playing game of the bot");
+                    helpList.Add("%clear / clr - clears the chat");
+                    helpList.Add("```");
+
+                    await e.User.SendMessage(string.Join("\n", helpList));
+                });
+            });
+        }
+
+        private static void gpsCooldown(object source, ElapsedEventArgs e)
+        {
+            if (gpsCooldownInt > 0)
+                gpsCooldownInt--;
+        }
 
         private void Log(object sender, LogMessageEventArgs e)
         {
