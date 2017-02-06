@@ -39,14 +39,17 @@ namespace SuperBot
               await discord.Connect("token", TokenType.Bot);                    
               Console.WriteLine("Bot connected correctly");                    
               discord.SetGame("%help for commands");                    
-							});                    
-							break;
-							}
-					 });						
-
-			private void Log(object sender, LogMessageEventArgs e)        
-			{            
-			Console.WriteLine($"[{e.Source}] {e.Message}");
-			}
-	 }
+	      break;
+	      }
+	   });
+	      
+	private commands()
+	{
+		
+	      
+	private void Log(object sender, LogMessageEventArgs e)        
+	{            
+	Console.WriteLine($"[{e.Source}] {e.Message}");
+	}
+    }
 }
