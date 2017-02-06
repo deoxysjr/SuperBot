@@ -32,6 +32,8 @@ namespace SuperBot
           
           commands = discord.GetService<CommandService>();
           
+	  Commands();	
+      
           discord.ExecuteAndWait(async () =>            
           {                
               while (true)                
@@ -43,9 +45,10 @@ namespace SuperBot
 	      }
 	   });
 	      
-	private commands()
+	private void commands()
 	{
 		
+	}	
 	      
 	private void Log(object sender, LogMessageEventArgs e)        
 	{            
