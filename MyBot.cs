@@ -22,16 +22,13 @@ namespace Superbot
 
         string[] lol;
         string[] picture;
-        string[] oppai;
         string[] music;
-        string[] Hentai;
 
         public static string commandPrefix = "%";
         public static int CommandsUsed = 0;
         public static DateTime MessageSent;
         public static int gpsCooldownInt = 0;
         public static string Month = "januari";
-        public readonly string token = "MjU3MTMwNTIxMzU4ODkzMDU3.Cy2VZw.4SOsIf1wAj_d89Bpt2_154ac_hk";
 
         //StartUpTime
 
@@ -46,16 +43,6 @@ namespace Superbot
         public MyBot()
         {
             rand = new Random();
-
-            Hentai = new string[]
-            {
-                "Hentai/Hentai 1.gif",
-                "Hentai/Hentai 2.jpg",
-                "Hentai/Hentai 3.gif",
-                "Hentai/Hentai 4.jpg",
-                "Hentai/Hentai 5.gif",
-                "Hentai/Hentai 6.jpg"
-            };
 
             music = new string[]
             {
@@ -85,33 +72,6 @@ namespace Superbot
                 "afbeeldingen/afbeelding6.jpg", //5
                 "afbeeldingen/afbeelding7.jpg", //6
                 "afbeeldingen/afbeelding8.jpg"  //7
-            };
-
-            oppai = new string[]
-            {
-                "Boobs/boobs 1.jpg",  //0
-                "Boobs/boobs 2.jpg",  //1
-                "Boobs/boobs 3.jpg",  //2
-                "Boobs/boobs 4.jpg",  //3
-                "Boobs/boobs 5.jpg",  //4
-                "Boobs/boobs 6.jpg",  //5
-                "Boobs/boobs 7.jpg",  //6
-                "Boobs/boobs 8.jpg",  //7
-                "Boobs/boobs 9.jpg",  //8
-                "Boobs/boobs 10.jpg", //9
-                "Boobs/boobs 11.jpg", //10
-                "Boobs/boobs 12.jpg", //11
-                "Boobs/boobs 13.jpg", //12
-                "Boobs/boobs 14.jpg", //13
-                "Boobs/boobs 15.jpg", //14
-                "Boobs/boobs 16.jpg", //15
-                "Boobs/boobs 17.jpg", //16
-                "Boobs/boobs 18.jpg", //17
-                "Boobs/boobs 19.jpg", //18
-                "Boobs/boobs 20.jpg", //19
-                "Boobs/boobs 21.jpg", //20
-                "Boobs/boobs 22.jpg", //21
-                "Boobs/boobs 23.jpg"  //22
             };
 
             discord = new DiscordClient(x =>
@@ -199,7 +159,7 @@ namespace Superbot
                         .Do(async (e) =>
                         {
                             CommandsUsed++;
-                            if (e.User.Id == 245140333330038785)
+                            if (e.User.Id == "ID")
                             {
                                 string text = e.Args[0];
                                 await e.Channel.SendMessage("Your bot is now playing: " + $"(**{text}**)");
@@ -269,7 +229,7 @@ namespace Superbot
                 {
                     Console.ForegroundColor = ConsoleColor.Cyan;
                     Console.WriteLine("SomeOne used the close command");
-                    if(e.User.Id == 245140333330038785)
+                    if(e.User.Id == "ÏD")
                     {
                         await e.Channel.SendMessage($"{e.User} Super Bot is stoping");
                         await e.Channel.SendMessage("confirm the stop in the Consol");
@@ -560,23 +520,6 @@ namespace Superbot
                         }
                     });
 
-            commands.CreateCommand("oppai")
-                .Do(async (e) =>
-                {
-                    CommandsUsed++;
-                    int randomOppaiIndex = rand.Next(oppai.Length);
-                    string oppaiToPost = oppai[randomOppaiIndex];
-                    await e.Channel.SendFile(oppaiToPost);
-                });
-            commands.CreateCommand("hentai")
-                .Do(async (e) =>
-                {
-                    CommandsUsed++;
-                    int randomHentai = rand.Next(Hentai.Length);
-                    string HentaiToPost = Hentai[randomHentai];
-                    await e.Channel.SendFile(HentaiToPost);
-                });
-
             commands.CreateCommand("time")
                 .Do(async (e) =>
                 {
@@ -758,13 +701,6 @@ namespace Superbot
                         await e.Channel.SendMessage($"This command is currently on a cooldown. Please try again in {gpsCooldownInt} seconds.");
                 });
 
-            commands.CreateCommand("itsnotrape")
-                .Do(async (e) =>
-                {
-                    CommandsUsed++;
-                    await e.Channel.SendMessage("There is no such thing as rape. Any female who leaves her rightful place in the house and the kitchen is fucking begging for cock in her holes. If she gets the cock she so badly is asking for, it's not fucking rape, it's a damn slut getting what she fucking deserves. Males still rule this fucking world. In most of the world, a fucking bitch can get killed for looking at a man straight in the eye. In America and Europe, every day dumb sluts get their holes penetrated without their so - called consent, which isn't rape, just them getting the fucking dick they deserve up their asses. Sexual abuse is on the rise, spousal abuse is on the rise and more bitches die every year. Fucking cunts. I am so glad I was born a man. I am so glad there is a bunch of retarded sluts jumping trough hoops just to get my cock. Haha, females are so fucking sad. We treat you bitches like shit, and you still spend time, money and effort on trying to look good for us. Way to be a good slave, whores. Now keep acting like sluts and sucking our cocks. And if you change your mind after you leave the house, too fucking bad, you're getting your holes fucked and there isn't shit you can do about it because that's your only fucking purpose in life.");
-                });
-
             discord.MessageReceived += async (s, e) =>
             {
                 if (!e.User.IsBot)
@@ -942,24 +878,6 @@ namespace Superbot
 
                     await e.User.SendMessage(string.Join("\n", helpList));
                 });
-
-                cgb.CreateCommand("6")
-                .Alias(new string[] { "6" })
-                .Do(async (e) =>
-                {
-                    CommandsUsed++;
-                    var helpList = new List<string>();
-
-                    helpList.Add("```");
-                    helpList.Add("This is a secret list of commands");
-                    helpList.Add(" ");
-                    helpList.Add("%oppai - sends boob pictures");
-                    helpList.Add("%hentai - sends hentai");
-                    helpList.Add("%itsnotrape - ?????");
-                    helpList.Add("```");
-
-                    await e.User.SendMessage(string.Join("\n", helpList));
-                });
             });
 
             commands.CreateGroup("help", cgb =>
@@ -1076,24 +994,6 @@ namespace Superbot
                     helpList.Add("%gif - sends you a gif");
                     helpList.Add("%picture - sends a picture");
                     helpList.Add("%funny - sends a funny picture");
-                    helpList.Add("```");
-
-                    await e.Channel.SendMessage(string.Join("\n", helpList));
-                });
-
-                cgb.CreateCommand("6")
-                .Alias(new string[] { "6" })
-                .Do(async (e) =>
-                {
-                    CommandsUsed++;
-                    var helpList = new List<string>();
-
-                    helpList.Add("```");
-                    helpList.Add("This is a secret list of commands");
-                    helpList.Add(" ");
-                    helpList.Add("%oppai - sends boob pictures");
-                    helpList.Add("%hentai - sends hentai");
-                    helpList.Add("%itsnotrape - ?????");
                     helpList.Add("```");
 
                     await e.Channel.SendMessage(string.Join("\n", helpList));
