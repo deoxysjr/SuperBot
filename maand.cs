@@ -1,3 +1,4 @@
+//maanden
 public static string Month = "januari";
 
 if(DateTime.Month == 1)
@@ -46,4 +47,11 @@ if(DateTime.Month == 11)
 }if(DateTime.Month == 12)
 {
 	Month = "december";
+}
+//specialen dagen
+public static string SPdag = "nieuw year";
+
+if(DateTime.DayOfYear == 1)
+{
+	
 }
