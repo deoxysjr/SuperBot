@@ -58,10 +58,13 @@ if(SpDay == false)
 }	
 else
 {
-	
+    if(DateTime.DayOfYear == 1)
+    {
+        SPday = "new year";
+    }
+    if(DateTime.DayOfYear == 366)
+    {
+        SPday = "schrikel jaar";
+    }
 }
-if(DateTime.DayOfYear == 1)
-{
-	SPday = "new year"
-}
-if(DateTime.DayOfYear == )
+
