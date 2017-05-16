@@ -49,9 +49,11 @@ if(DateTime.Month == 11)
 	Month = "december";
 }
 //specialen dagen
-public static string SPdag = "nieuw year";
+public static string SPday = "new year";
+public bool SpDay = false;
 
 if(DateTime.DayOfYear == 1)
 {
-	
+	SPday = "new year"
 }
+if(DateTime.DayOfYear == )
