@@ -52,6 +52,14 @@ if(DateTime.Month == 11)
 public static string SPday = "new year";
 public bool SpDay = false;
 
+if(SpDay == false)
+{
+	return;
+}	
+else
+{
+	
+}
 if(DateTime.DayOfYear == 1)
 {
 	SPday = "new year"
