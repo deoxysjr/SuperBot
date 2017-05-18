@@ -130,56 +130,478 @@ namespace Superbot
                             {
                                 discord.SetStatus(UserStatus.Invisible);
                                 await e.Channel.SendMessage("You bot has been set to: **Invisible**");
-                                CommandsUsed++;                        });
-                        cgb.CreateCommand("DoNotDisturb")                        .Alias(new string[] {"dnd"})                        .Do(async (e) =>                        {                            CommandsUsed++;                            discord.SetStatus(UserStatus.DoNotDisturb);                            await e.Channel.SendMessage("You bot has been set to: **DoNotDisturb**");                        });
-                        cgb.CreateCommand("Online")                        .Do(async (e) =>                        {                            CommandsUsed++;                            discord.SetStatus(UserStatus.Online);                            await e.Channel.SendMessage("You bot has been set to: **Online**");                        });                    });
-                    commands.CreateCommand("Playing")                        .Alias(new string[] { "play" })                        .Parameter("text", ParameterType.Unparsed)                        .Do(async (e) =>                        {                            CommandsUsed++;                            if (e.User.Id == "ID")                            {                                string text = e.Args[0];                                await e.Channel.SendMessage("Your bot is now playing: " + $"(**{text}**)");                                discord.SetGame(text);                                Console.ForegroundColor = ConsoleColor.Cyan;                                Console.WriteLine("%playing is used");                                Console.ForegroundColor = ConsoleColor.Magenta;                                Console.WriteLine($"you bot is now playing: ({text})");                            }                            else                            {                                await e.Channel.SendMessage($"you can't do that {e.User.Name}");                            }                        });                    break;                }            });        }
-        private void RegisterClearCommand()        {            commands.CreateCommand("clear")                .Alias(new string[] {"clr"})                .Do(async (e) =>                {                    CommandsUsed++;                    Message[] messagesToDelete;                    Message[] messagesToDelete2;                    messagesToDelete = await e.Channel.DownloadMessages(100);                    messagesToDelete2 = await e.Channel.DownloadMessages(100);                    await e.Channel.DeleteMessages(messagesToDelete);                                                            /*await Task.Delay(500);                    await e.Channel.DeleteMessages(messagesToDelete2);                    */                });
-            commands.CreateCommand("clear 10")                .Alias(new string[] {"clr 10"})                .Do(async (e) =>                {                    CommandsUsed++;                    Message[] messagesToDelete;                    messagesToDelete = await e.Channel.DownloadMessages(10);                    await e.Channel.DeleteMessages(messagesToDelete);                });        }
-        private void ReristerPictureCommand()        {            commands.CreateCommand("picture")                .Do(async (e) =>                {                    CommandsUsed++;                    int randomPictueIndex = rand.Next(picture.Length);                    string pictureToPost = picture[randomPictueIndex];                    await e.Channel.SendFile(pictureToPost);                });                        }
-        private void Commands()        {            commands.CreateCommand("close")                .Do(async (e) =>                {                    Console.ForegroundColor = ConsoleColor.Cyan;                    Console.WriteLine("SomeOne used the close command");                    if(e.User.Id == "ÏD")                    {                        await e.Channel.SendMessage($"{e.User} Super Bot is stoping");                        await e.Channel.SendMessage("confirm the stop in the Consol");                        Console.ForegroundColor = ConsoleColor.Black;                        Console.BackgroundColor = ConsoleColor.White;                        Console.WriteLine("Do you want to stop the bot");                        Console.WriteLine("Yes or No");                        Console.ForegroundColor = ConsoleColor.White;                        Console.BackgroundColor = ConsoleColor.Black;                        if(Console.ReadLine() == "Yes")                        {                            await e.Channel.SendMessage("The bot has been stoped");                            await discord.Disconnect();                            Console.WriteLine("The Bot has been Disconected");                        }                        if (Console.ReadLine() == "yes")                        {                            await e.Channel.SendMessage("The bot has been stoped");                            await discord.Disconnect();                            Console.WriteLine("The Bot has been Disconected");                        }                        if (Console.ReadLine() == "No")                        {                            await e.Channel.SendMessage("The bot has not been stoped");                            Console.WriteLine("haha I tryed");                        }                        if (Console.ReadLine() == "no")                        {                            await e.Channel.SendMessage("The bot has not been stoped");                            Console.WriteLine("haha I tryed");                        }                    }                });
-            commands.CreateCommand("CommandsCount")                .Alias(new string[] {"cc"})                .Do(async (e) =>                {
+                                CommandsUsed++;
+                            });
+                        
+                        cgb.CreateCommand("DoNotDisturb")
+                            .Alias(new string[] {"dnd"})
+                            .Do(async (e) =>
+                                {
+                                    CommandsUsed++;
+                                    discord.SetStatus(UserStatus.DoNotDisturb);
+                                    await e.Channel.SendMessage("You bot has been set to: **DoNotDisturb**");
+                                });
+                        
+                        cgb.CreateCommand("Online")
+                            .Do(async (e) =>
+                                {
+                                    CommandsUsed++;
+                                    discord.SetStatus(UserStatus.Online);
+                                    await e.Channel.SendMessage("You bot has been set to: **Online**");
+                                });
+                    });
+                    
+                    commands.CreateCommand("Playing")
+                        .Alias(new string[] { "play" })
+                        .Parameter("text", ParameterType.Unparsed)
+                        .Do(async (e) =>
+                            {
+                                CommandsUsed++;
+                                if (e.User.Id == "ID")
+                                {
+                                    string text = e.Args[0];
+                                    await e.Channel.SendMessage("Your bot is now playing: " + $"(**{text}**)");
+                                    discord.SetGame(text);
+                                    Console.ForegroundColor = ConsoleColor.Cyan;
+                                    Console.WriteLine("%playing is used");
+                                    Console.ForegroundColor = ConsoleColor.Magenta;
+                                    Console.WriteLine($"you bot is now playing: ({text})");
+                                }
+                                else
+                                {
+                                    await e.Channel.SendMessage($"you can't do that {e.User.Name}");
+                                }
+                            });
+                    break;
+                }
+            });
+        }
+        
+        private void RegisterClearCommand()
+        {
+            commands.CreateCommand("clear")
+                .Alias(new string[] {"clr"})
+                .Do(async (e) =>
+                    {
+                        CommandsUsed++;
+                        Message[] messagesToDelete;
+                        Message[] messagesToDelete2;
+                        messagesToDelete = await e.Channel.DownloadMessages(100);
+                        messagesToDelete2 = await e.Channel.DownloadMessages(100);
+                        await e.Channel.DeleteMessages(messagesToDelete);
+                        /*await Task.Delay(500);
+                        await e.Channel.DeleteMessages(messagesToDelete2);
+                        */
+                    });
+            
+            commands.CreateCommand("clear 10")
+                .Alias(new string[] {"clr 10"})
+                .Do(async (e) =>
+                    {
+                        CommandsUsed++;
+                        Message[] messagesToDelete;
+                        messagesToDelete = await e.Channel.DownloadMessages(10);
+                        await e.Channel.DeleteMessages(messagesToDelete);
+                    });
+        }
+        
+        private void ReristerPictureCommand()
+        {
+            commands.CreateCommand("picture")
+                .Do(async (e) =>
+                    {
+                        CommandsUsed++;
+                        int randomPictueIndex = rand.Next(picture.Length);
+                        string pictureToPost = picture[randomPictueIndex];
+                        await e.Channel.SendFile(pictureToPost);
+                    });
+        }
+        
+        private void Commands()
+        {
+            commands.CreateCommand("close")
+                .Do(async (e) =>
+                    {
+                        Console.ForegroundColor = ConsoleColor.Cyan;
+                        Console.WriteLine("SomeOne used the close command");
+                        if(e.User.Id == "ID")
+                        {
+                            await e.Channel.SendMessage($"{e.User} Super Bot is stoping");
+                            await e.Channel.SendMessage("confirm the stop in the Consol");
+                            Console.ForegroundColor = ConsoleColor.Black;
+                            Console.BackgroundColor = ConsoleColor.White;
+                            Console.WriteLine("Do you want to stop the bot");
+                            Console.WriteLine("Yes or No");
+                            Console.ForegroundColor = ConsoleColor.White;
+                            Console.BackgroundColor = ConsoleColor.Black;
+                            if(Console.ReadLine() == "Yes")
+                            {
+                                await e.Channel.SendMessage("The bot has been stoped");
+                                await discord.Disconnect();
+                                Console.WriteLine("The Bot has been Disconected");
+                            }
+                            if (Console.ReadLine() == "yes")
+                            {
+                                await e.Channel.SendMessage("The bot has been stoped");
+                                await discord.Disconnect();
+                                Console.WriteLine("The Bot has been Disconected");
+                            }
+                            if (Console.ReadLine() == "No")
+                            {
+                                await e.Channel.SendMessage("The bot has not been stoped");
+                                Console.WriteLine("haha I tryed");
+                            }
+                            if (Console.ReadLine() == "no")
+                            {
+                                await e.Channel.SendMessage("The bot has not been stoped");
+                                Console.WriteLine("haha I tryed");
+                            }
+                        }
+                    });
+            
+            commands.CreateCommand("CommandsCount")
+                .Alias(new string[] {"cc"})
+                .Do(async (e) =>
+                    {
+                        
 
-                    await e.Channel.SendMessage($"the amount of commands = **{CommandsUsed}**");                });
-            commands.CreateCommand("CommandsCountClear")                .Alias(new string[] {"ccclear"})                .Do(async (e) =>                {                    CommandsUsed = 0;                    await e.Channel.SendMessage($"the amount of commands used are now set to **{CommandsUsed}**");                });
-            commands.CreateCommand("Maketxt")                .Parameter("file", ParameterType.Unparsed)                .Do(async (e) =>                {                    CommandsUsed++;                    var path = $@"C:\Users\deoxysjr\Documents\Visual Studio 2015\Projects\Superbot\Superbot\bin\Debug\file\{e.Args[0]}.txt";                    var file = $"{Directory.GetCurrentDirectory()}\\file\\"; // Grab video folder                    File.CreateText(path); // Create video folder if not found
-                    await e.Channel.SendMessage("The file is been made");                    await e.Channel.SendFile($@"C:\Users\deoxysjr\Documents\Visual Studio 2015\Projects\Superbot\Superbot\bin\Debug\file\{e.Args[0]}.txt");                });
-            commands.CreateCommand("write")                .Parameter("line", ParameterType.Unparsed)                .Do(async (e) =>                {                    CommandsUsed++;                    var path = @"C:\users\deoxysjr\Documents\Visual Studio 2015\Projects\Superbot\Superbot\bin\Debug\file\text.txt";                    File.AppendAllText(path, $"\r\n{e.Args[0]}");                    await e.Channel.SendFile(@"C:\users\deoxysjr\Documents\Visual Studio 2015\Projects\Superbot\Superbot\bin\Debug\file\text.txt");                });
-            commands.CreateCommand("cleartext")                .Do(async (e) =>                {                    CommandsUsed++;                    var path = @"C:\users\deoxysjr\Documents\Visual Studio 2015\Projects\Superbot\Superbot\bin\Debug\file\text.txt";                    File.WriteAllText(path, " ");                    await e.Channel.SendMessage("text.txt is cleared");                });
-            commands.CreateCommand("bye bye")                .Do(async (e) =>                {                    CommandsUsed++;                    await e.Channel.SendMessage(":wave::skin-tone-1: Bye Bye! :wave::skin-tone-1:");                });
-            commands.CreateCommand("hello")                .Alias(new string[] { "hi" })                .Do(async (e) =>                {                    CommandsUsed++;                    await e.Channel.SendMessage("hi!");                });            
-            commands.CreateCommand("dead")                .Alias(new string[] { ":skull_crossbones:" })                .Do(async (e) =>                {                    CommandsUsed++;                    await e.Channel.SendMessage(":skull_crossbones: :knife: kill your self :knife: :skull_crossbones:");                });
-            commands.CreateCommand("NL")                .Do(async (e) =>                {                    CommandsUsed++;                    await e.Channel.SendMessage(":flag_nl: + :flag_nl: + :flag_nl:");                    await e.Channel.SendMessage(":flag_nl: +-+NL+-+ :flag_nl:");                    await e.Channel.SendMessage(":flag_nl: + :flag_nl: + :flag_nl:");                    await e.Channel.SendMessage(":flag_nl: +-+NL+-+ :flag_nl:");                    await e.Channel.SendMessage(":flag_nl: + :flag_nl: + :flag_nl:");                });
-            commands.CreateCommand("happy")                .Do(async (e) =>                {                    CommandsUsed++;                    await e.Channel.SendMessage(":grinning: :joy: :grinning: :joy: :grinning: :grinning: :joy: :grinning: :joy: :grinning: :joy: :grinning: :joy: :grinning: :joy: :grinning: :joy: :grinning: :joy: :grinning: :joy: :grinning: :joy: :grinning: :joy: :joy: ");                });
-            commands.CreateCommand("lol")                .Do(async (e) =>                 {                     CommandsUsed++;                     await e.Channel.SendMessage("https://www.youtube.com/watch?v=bhBGFy7SKCc");                 });
-            commands.CreateCommand("lol lol")                .Do(async (e) =>                {                    CommandsUsed++;                    int randomVideoIndex = rand.Next(lol.Length);                    string videoToPost = lol[randomVideoIndex];                    await e.Channel.SendMessage(videoToPost);                });
-            commands.CreateCommand("music")                .Do(async (e) =>                {                    CommandsUsed++;                    int randomMusicIndex = rand.Next(music.Length);                    string musicToPost = music[randomMusicIndex];                    await e.Channel.SendMessage(musicToPost);                });
-            commands.CreateCommand("hi")                .Do(async (e) =>                {                    CommandsUsed++;                    await e.User.SendMessage("hi");                });
-            commands.CreateCommand("say")                .Description("Make the bot say something")                .Alias("s")                .Parameter("text", ParameterType.Unparsed)                .Do(async (e) =>                {                    CommandsUsed++;                    string text = e.Args[0];                    await e.Channel.SendMessage(text);                });
-            commands.CreateCommand("nice")                .Do(async (e) =>                {                    CommandsUsed++;                    var lol = new List<string>();
-                    lol.Add("``");                    lol.Add("lol");                    lol.Add("lol");                    lol.Add("lol");                    lol.Add("lol");                    lol.Add("lol");                    lol.Add("lol");                    lol.Add("lol");                    lol.Add("lol");                    lol.Add("lol");                    lol.Add("``");
-                    await e.Channel.SendMessage("lol");                    await e.User.SendMessage(string.Join("\n", lol));                });
-            commands.CreateCommand("serverinfo")                .Description("Get info about this server.")                .Do(async e =>                    {                        CommandsUsed++;                        var infomsg = new List<string>();
-                        infomsg.Add("```erlang");                        infomsg.Add("  Server: " + e.Server.Name);                        infomsg.Add("      Id: " + e.Server.Id);                        infomsg.Add("  Region: " + e.Server.Region.Name);                        infomsg.Add("   Users: " + e.Server.UserCount);                        infomsg.Add($"Channels: ({e.Server.TextChannels.Count()})text " +                                              $"({e.Server.VoiceChannels.Count()})voice " +                                              $"({e.Server.TextChannels.Count(x => x.Users.Count() < e.Server.Users.Count())})hidden");                        infomsg.Add($"   Owner: {e.Server.Owner.Name}#{e.Server.Owner.Discriminator}");                        infomsg.Add("    Icon: " + e.Server.IconUrl);                        infomsg.Add("   Roles: " + string.Join(", ", e.Server.Roles.Where(x => !x.Name.Contains("@everyone"))));                        infomsg.Add("```");
-                        await e.Channel.SendMessage(string.Join("\n", infomsg));                    });
-            commands.CreateCommand("userinfo")                .Description("Get info about the (optionally) specified user.")                .Parameter("user", ParameterType.Unparsed)                .Do(async e =>                    {                        CommandsUsed++;                        var userRoles = e.User.Roles;
-                        if (userRoles.Any(input => input.Name.ToUpper() == "ADMIN"))                        {                            User u = null;                            string findUser = e.Args[0];                            if (!string.IsNullOrWhiteSpace(findUser))                            {                                if (e.Message.MentionedUsers.Count() == 1)                                    u = e.Message.MentionedUsers.FirstOrDefault();                                else if (e.Server.FindUsers(findUser).Any())                                    u = e.Server.FindUsers(findUser).FirstOrDefault();                                else                                    await e.Channel.SendMessage($"I was unable to find a user like `{findUser}`");                            }                            else                            {                                u = e.User;                            }
+                        await e.Channel.SendMessage($"the amount of commands = **{CommandsUsed}**");
+                    });
+            
+            commands.CreateCommand("CommandsCountClear")
+                .Alias(new string[] {"ccclear"})
+                .Do(async (e) =>
+                    {
+                        CommandsUsed = 0;
+                        await e.Channel.SendMessage($"the amount of commands used are now set to **{CommandsUsed}**");
+                    });
+            
+            commands.CreateCommand("Maketxt")
+                .Parameter("file", ParameterType.Unparsed)
+                .Do(async (e) =>
+                    {
+                        CommandsUsed++;
+                        var path = $@"C:\Users\deoxysjr\Documents\Visual Studio 2015\Projects\Superbot\Superbot\bin\Debug\file\{e.Args[0]}.txt";
+                        var file = $"{Directory.GetCurrentDirectory()}\\file\\"; // Grab video folder
+                        File.CreateText(path); // Create video folder if not found
+                        await e.Channel.SendMessage("The file is been made");
+                        await e.Channel.SendFile($@"C:\Users\deoxysjr\Documents\Visual Studio 2015\Projects\Superbot\Superbot\bin\Debug\file\{e.Args[0]}.txt");
+                    });
+            
+            commands.CreateCommand("write")
+                .Parameter("line", ParameterType.Unparsed)
+                .Do(async (e) =>
+                    {
+                        CommandsUsed++;
+                        var path = @"C:\users\deoxysjr\Documents\Visual Studio 2015\Projects\Superbot\Superbot\bin\Debug\file\text.txt";
+                        File.AppendAllText(path, $"\r\n{e.Args[0]}");
+                        await e.Channel.SendFile(@"C:\users\deoxysjr\Documents\Visual Studio 2015\Projects\Superbot\Superbot\bin\Debug\file\text.txt");
+                    });
+            
+            commands.CreateCommand("cleartext")
+                .Do(async (e) =>
+                    {
+                        CommandsUsed++;
+                        var path = @"C:\users\deoxysjr\Documents\Visual Studio 2015\Projects\Superbot\Superbot\bin\Debug\file\text.txt";
+                        File.WriteAllText(path, " ");
+                        await e.Channel.SendMessage("text.txt is cleared");
+                    });
+            
+            commands.CreateCommand("bye bye")
+                .Do(async (e) =>
+                    {
+                        CommandsUsed++;
+                        await e.Channel.SendMessage(":wave::skin-tone-1: Bye Bye! :wave::skin-tone-1:");
+                    });
+            
+            commands.CreateCommand("hello")
+                .Alias(new string[] { "hi" })
+                .Do(async (e) =>
+                    {
+                        CommandsUsed++;
+                        await e.Channel.SendMessage("hi!");
+                    });
+            
+            commands.CreateCommand("dead")
+                .Alias(new string[] { ":skull_crossbones:" })
+                .Do(async (e) =>
+                    {
+                        CommandsUsed++;
+                        await e.Channel.SendMessage(":skull_crossbones: :knife: kill your self :knife: :skull_crossbones:");
+                    });
+            
+            commands.CreateCommand("NL")
+                .Do(async (e) =>
+                    {
+                        CommandsUsed++;
+                        await e.Channel.SendMessage(":flag_nl: + :flag_nl: + :flag_nl:");
+                        await e.Channel.SendMessage(":flag_nl: +-+NL+-+ :flag_nl:");
+                        await e.Channel.SendMessage(":flag_nl: + :flag_nl: + :flag_nl:");
+                        await e.Channel.SendMessage(":flag_nl: +-+NL+-+ :flag_nl:");
+                        await e.Channel.SendMessage(":flag_nl: + :flag_nl: + :flag_nl:");
+                    });
+            
+            commands.CreateCommand("happy")
+                .Do(async (e) =>
+                    {
+                        CommandsUsed++;
+                        await e.Channel.SendMessage(":grinning: :joy: :grinning: :joy: :grinning: :grinning: :joy: :grinning: :joy: :grinning: :joy: :grinning: :joy: :grinning: :joy: :grinning: :joy: :grinning: :joy: :grinning: :joy: :grinning: :joy: :grinning: :joy: :joy: ");
+                    });
+            
+            commands.CreateCommand("lol")
+                .Do(async (e) =>
+                    {
+                        CommandsUsed++;
+                        await e.Channel.SendMessage("https://www.youtube.com/watch?v=bhBGFy7SKCc");
+                    });
+            
+            commands.CreateCommand("lol lol")
+                .Do(async (e) =>
+                    {
+                        CommandsUsed++;
+                        int randomVideoIndex = rand.Next(lol.Length);
+                        string videoToPost = lol[randomVideoIndex];
+                        await e.Channel.SendMessage(videoToPost);
+                    });
+            
+            commands.CreateCommand("music")
+                .Do(async (e) =>
+                    {
+                        CommandsUsed++;
+                        int randomMusicIndex = rand.Next(music.Length);
+                        string musicToPost = music[randomMusicIndex];
+                        await e.Channel.SendMessage(musicToPost);
+                    });
+            
+            commands.CreateCommand("hi")
+                .Do(async (e) =>
+                    {
+                        CommandsUsed++;
+                        await e.User.SendMessage("hi");
+                    });
+            
+            commands.CreateCommand("say")
+                .Description("Make the bot say something")
+                .Alias("s")
+                .Parameter("text", ParameterType.Unparsed)
+                .Do(async (e) =>
+                    {
+                        CommandsUsed++;
+                        string text = e.Args[0];
+                        await e.Channel.SendMessage(text);
+                    });
+            
+            commands.CreateCommand("nice")
+                .Do(async (e) =>
+                    {
+                        CommandsUsed++;
+                        var lol = new List<string>();
+                        
+                        lol.Add("``");
+                        lol.Add("lol");
+                        lol.Add("lol");
+                        lol.Add("lol");
+                        lol.Add("lol");
+                        lol.Add("lol");
+                        lol.Add("lol");
+                        lol.Add("lol");
+                        lol.Add("lol");
+                        lol.Add("lol");
+                        lol.Add("``");
+                        
+                        await e.Channel.SendMessage("lol");
+                        await e.User.SendMessage(string.Join("\n", lol));
+                    });
+            
+            commands.CreateCommand("serverinfo")
+                .Description("Get info about this server.")
+                .Do(async e =>
+                    {
+                        CommandsUsed++;
+                        var infomsg = new List<string>();
+                        infomsg.Add("```erlang");
+                        infomsg.Add("  Server: " + e.Server.Name);
+                        infomsg.Add("      Id: " + e.Server.Id);
+                        infomsg.Add("  Region: " + e.Server.Region.Name);
+                        infomsg.Add("   Users: " + e.Server.UserCount);
+                        infomsg.Add($"Channels: ({e.Server.TextChannels.Count()})text " +
+                                    $"({e.Server.VoiceChannels.Count()})voice " +
+                                    $"({e.Server.TextChannels.Count(x => x.Users.Count() < e.Server.Users.Count())})hidden");
+                        infomsg.Add($"   Owner: {e.Server.Owner.Name}#{e.Server.Owner.Discriminator}");
+                        infomsg.Add("    Icon: " + e.Server.IconUrl);
+                        infomsg.Add("   Roles: " + string.Join(", ", e.Server.Roles.Where(x => !x.Name.Contains("@everyone"))));
+                        infomsg.Add("```");
+                        
+                        await e.Channel.SendMessage(string.Join("\n", infomsg));
+                    });
+            
+            commands.CreateCommand("userinfo")
+                .Description("Get info about the (optionally) specified user.")
+                .Parameter("user", ParameterType.Unparsed)
+                .Do(async e =>
+                    {
+                        CommandsUsed++;
+                        var userRoles = e.User.Roles;
+                        if (userRoles.Any(input => input.Name.ToUpper() == "ADMIN"))
+                        {
+                            User u = null;
+                            string findUser = e.Args[0];
+                            if (!string.IsNullOrWhiteSpace(findUser))
+                            {
+                                if (e.Message.MentionedUsers.Count() == 1)
+                                    u = e.Message.MentionedUsers.FirstOrDefault();
+                                else if (e.Server.FindUsers(findUser).Any())
+                                    u = e.Server.FindUsers(findUser).FirstOrDefault();
+                                else
+                                    await e.Channel.SendMessage($"I was unable to find a user like `{findUser}`");
+                            }
+                            else
+                            {
+                                u = e.User;
+                            }
                             var infomsg = new List<string>();
                             infomsg.Add("```erlang");
-                            if (!string.IsNullOrWhiteSpace(u.Nickname))                            {                                infomsg.Add($"       Nick: {u.Nickname}");                            }
-                            infomsg.Add($"       Name: {u.Name}#{u.Discriminator}");                            infomsg.Add($"         Id: {u.Id}");
-                            if (u.CurrentGame != null)                            {                                if (!string.IsNullOrWhiteSpace(u.CurrentGame.Value.Url))                                {                                    infomsg.Add($"  Streaming: {u.CurrentGame.Value.Name} at {u.CurrentGame.Value.Url}");                                }                                else                                {                                    infomsg.Add($"    Playing: {u.CurrentGame.Value.Name}");                                }                            }
-                            if (u.JoinedAt != null)                            {                                var jspan = DateTime.Now - u.JoinedAt;                                infomsg.Add($"     Joined: {Math.Round(jspan.TotalDays, 1)} days ago ({u.JoinedAt.ToUniversalTime()})");                            }                            if (u.LastActivityAt != null)                            {                                var aspan = DateTime.Now - DateTime.Parse(u.LastActivityAt.ToString());                                infomsg.Add($"Last Active: {Math.Round(aspan.TotalDays, 1)} days ago ({DateTime.Parse(u.LastActivityAt.ToString()).ToUniversalTime()})");                            }                            if (u.LastOnlineAt != null)                            {                                var ospan = DateTime.Now - DateTime.Parse(u.LastOnlineAt.ToString());                                infomsg.Add($"Last Online: {Math.Round(ospan.TotalDays, 1)} days ago ({DateTime.Parse(u.LastOnlineAt.ToString()).ToUniversalTime()})");                            }
-                            infomsg.Add($"       Icon: {u.AvatarUrl}");                            infomsg.Add($"      Roles: {string.Join(", ", u.Roles.Where(x => !x.Name.Contains("@everyone")))}");                            infomsg.Add("```");
-                            await e.Channel.SendMessage(string.Join("\n", infomsg));                        }                        else                        {                            await e.Channel.SendMessage("You don't have the admin permission for this command!");                        }                    });
-            commands.CreateCommand("time")                .Do(async (e) =>                {                    CommandsUsed++;                    var MessageSent = e.Message.Timestamp;
-                    if (MessageSent.Month == 1)                    {                        Month = "januari";                    }                    if (MessageSent.Month == 2)                    {                        Month = "feberuari";                    }                    if (MessageSent.Month == 3)                    {                        Month = "maart";                    }                    if (MessageSent.Month == 4)                    {                        Month = "april";                    }                    if (MessageSent.Month == 5)                    {                        Month = "mei";                    }                    if (MessageSent.Month == 6)                    {                        Month = "juni";                    }                    if (MessageSent.Month == 7)                    {                        Month = "juli";                    }                    if (MessageSent.Month == 8)                    {                        Month = "augustus";                    }                    if (MessageSent.Month == 9)                    {                        Month = "septemder";                    }                    if (MessageSent.Month == 10)                    {                        Month = "oktober";                    }                    if (MessageSent.Month == 11)                    {                        Month = "november";                    }                    if (MessageSent.Month == 12)                    {                        Month = "december";                    }
-                    var time = new List<string>();
-                    time.Add("```ini");                    time.Add($"Year   = ({MessageSent.Year})");                    time.Add($"Month  = ({MessageSent.Month}, {Month})");                    time.Add($"Day    = ({MessageSent.DayOfWeek} - {MessageSent.Day})");                    time.Add($"Hour   = ({MessageSent.Hour + 2})");                    time.Add($"Minute = ({MessageSent.Minute})");                    time.Add("```");
-                    await e.Channel.SendMessage(string.Join("\n", time));                });
-            commands.CreateCommand("date")                .Do(async (e) =>                {                    CommandsUsed++;                    MessageSent = e.Message.Timestamp;                    await e.Channel.SendMessage($"``{MessageSent.DayOfWeek} {MessageSent.Day}-{MessageSent.Month}-{MessageSent.Year} ``");                });
-            commands.CreateCommand("uptime")                .Do(async (e) =>                {                    CommandsUsed++;                    await e.Channel.SendMessage($"the bot is now {DateTime.Now - StartupTime} active");                });
-            commands.CreateCommand("roll") //create command                .Description("Rolls a die.") //add description, it will be shown when *help is used                .Parameter("number", ParameterType.Optional) //as an argument, we have a person we want to greet                .Do(async e =>                {                    CommandsUsed++;                    if (e.Message.Text.Contains($"{commandPrefix}roll "))                    {                        if (e.Message.Text.ToLower() == $"{commandPrefix}roll 10")                        {                            int dice = rand.Next(1, 11);                            await e.Channel.SendMessage($"The ten-sided die rolled a... {dice}!");                        }                        else if (e.Message.Text.ToLower() == $"{commandPrefix}roll 1")                            await e.Channel.SendMessage($"The one-sided die rolled a... one! Wow, surprising!");                        else if (e.Message.Text.ToLower() == $"{commandPrefix}roll 2")                        {                            int dice = rand.Next(1, 3);                            await e.Channel.SendMessage($"The two-sided die rolled a... {dice}!");                        }                        else if (e.Message.Text.ToLower() == $"{commandPrefix}roll 3")                        {                            int dice = rand.Next(1, 4);                            await e.Channel.SendMessage($"The three-sided die rolled a... {dice}!");                        }                        else if (e.Message.Text.ToLower() == $"{commandPrefix}roll 4")                        {                            int dice = rand.Next(1, 5);                            await e.Channel.SendMessage($"The four-sided die rolled a... {dice}!");                        }                        else if (e.Message.Text.ToLower() == $"{commandPrefix}roll 5")                        {                            int dice = rand.Next(1, 6);                            await e.Channel.SendMessage($"The five-sided die rolled a... {dice}!");                        }                        else if (e.Message.Text.ToLower() == $"{commandPrefix}roll 6")                        {                            int dice = rand.Next(1, 7);                            await e.Channel.SendMessage($"The six-sided die rolled a... {dice}!");                        }                        else if (e.Message.Text.ToLower() == $"{commandPrefix}roll 7")                        {                            int dice = rand.Next(1, 8);                            await e.Channel.SendMessage($"The seven-sided die rolled a... {dice}!");                        }                        else if (e.Message.Text.ToLower() == $"{commandPrefix}roll 8")                        {                            int dice = rand.Next(1, 9);                            await e.Channel.SendMessage($"The eight-sided die rolled a... {dice}!");                        }                        else if (e.Message.Text.ToLower() == $"{commandPrefix}roll 9")                        {                            int dice = rand.Next(1, 10);                            await e.Channel.SendMessage($"The nine-sided die rolled a... {dice}!");                        }                        else if (e.Message.Text.ToLower() == $"{commandPrefix}roll 10")                        {                            int dice = rand.Next(1, 11);                            await e.Channel.SendMessage($"The nine-sided die rolled a... {dice}!");                        }                        else if (e.Message.Text.ToLower() == $"{commandPrefix}roll 11")                        {                            int dice = rand.Next(1, 12);                            await e.Channel.SendMessage($"The eleven-sided die rolled a... {dice}!");                        }                        else if (e.Message.Text.ToLower() == $"{commandPrefix}roll 12")                        {                            int dice = rand.Next(1, 13);                            await e.Channel.SendMessage($"The twelve-sided die rolled a... {dice}!");                        }                        else                            await e.Channel.SendMessage($"You must pick a number between 1 and 12!");                    }                    else                    {                        int dice = rand.Next(1, 7);                        await e.Channel.SendMessage($"The six-sided die rolled a... {dice}!");                    }                });
+                            if (!string.IsNullOrWhiteSpace(u.Nickname))
+                            {
+                                infomsg.Add($"       Nick: {u.Nickname}");
+                            }
+                            infomsg.Add($"       Name: {u.Name}#{u.Discriminator}");
+                            infomsg.Add($"         Id: {u.Id}");
+                            if (u.CurrentGame != null)
+                            {
+                                if (!string.IsNullOrWhiteSpace(u.CurrentGame.Value.Url))
+                                {
+                                    infomsg.Add($"  Streaming: {u.CurrentGame.Value.Name} at {u.CurrentGame.Value.Url}");
+                                }
+                                else
+                                {
+                                    infomsg.Add($"    Playing: {u.CurrentGame.Value.Name}");
+                                }
+                            }
+                            if (u.JoinedAt != null)
+                            {
+                                var jspan = DateTime.Now - u.JoinedAt;
+                                infomsg.Add($"     Joined: {Math.Round(jspan.TotalDays, 1)} days ago ({u.JoinedAt.ToUniversalTime()})");
+                            }
+                            if (u.LastActivityAt != null)
+                            {
+                                var aspan = DateTime.Now - DateTime.Parse(u.LastActivityAt.ToString());
+                                infomsg.Add($"Last Active: {Math.Round(aspan.TotalDays, 1)} days ago ({DateTime.Parse(u.LastActivityAt.ToString()).ToUniversalTime()})");
+                            }
+                            if (u.LastOnlineAt != null)
+                            {
+                                var ospan = DateTime.Now - DateTime.Parse(u.LastOnlineAt.ToString());
+                                infomsg.Add($"Last Online: {Math.Round(ospan.TotalDays, 1)} days ago ({DateTime.Parse(u.LastOnlineAt.ToString()).ToUniversalTime()})");
+                            }
+                            infomsg.Add($"       Icon: {u.AvatarUrl}");
+                            infomsg.Add($"      Roles: {string.Join(", ", u.Roles.Where(x => !x.Name.Contains("@everyone")))}");
+                            infomsg.Add("```");
+                            
+                            await e.Channel.SendMessage(string.Join("\n", infomsg));
+                        }
+                        else
+                        {
+                            await e.Channel.SendMessage("You don't have the admin permission for this command!");
+                        }
+                    });
+            
+            commands.CreateCommand("time")
+                .Do(async (e) =>
+                    {
+                        CommandsUsed++;
+                        var MessageSent = e.Message.Timestamp;
+                        
+                        if (MessageSent.Month == 1)
+                        {
+                            Month = "januari";
+                        }
+                        if (MessageSent.Month == 2)
+                        {
+                            Month = "feberuari";
+                        }
+                        if (MessageSent.Month == 3)
+                        {
+                            Month = "maart";
+                        }
+                        if (MessageSent.Month == 4)
+                        {
+                            Month = "april";
+                        }
+                        if (MessageSent.Month == 5)
+                        {
+                            Month = "mei";
+                        }
+                        if (MessageSent.Month == 6)
+                        {
+                            Month = "juni";
+                        }
+                        if (MessageSent.Month == 7)
+                        {
+                            Month = "juli";
+                        }
+                        if (MessageSent.Month == 8)
+                        {
+                            Month = "augustus";
+                        }
+                        if (MessageSent.Month == 9)
+                        {
+                            Month = "septemder";
+                        }
+                        if (MessageSent.Month == 10)
+                        {
+                            Month = "oktober";
+                        }
+                        if (MessageSent.Month == 11)
+                        {
+                            Month = "november";
+                        }
+                        if (MessageSent.Month == 12)
+                        {
+                            Month = "december";
+                        }
+                        
+                        var time = new List<string>();
+                        
+                        time.Add("```ini");
+                        time.Add($"Year   = ({MessageSent.Year})");
+                        time.Add($"Month  = ({MessageSent.Month}, {Month})");
+                        time.Add($"Day    = ({MessageSent.DayOfWeek} - {MessageSent.Day})");
+                        time.Add($"Hour   = ({MessageSent.Hour + 2})");
+                        time.Add($"Minute = ({MessageSent.Minute})");
+                        time.Add("```");
+                        
+                        await e.Channel.SendMessage(string.Join("\n", time));
+                    });
+            
+            commands.CreateCommand("date")
+                .Do(async (e) =>
+                    {
+                        CommandsUsed++;
+                        MessageSent = e.Message.Timestamp;
+                        await e.Channel.SendMessage($"``{MessageSent.DayOfWeek} {MessageSent.Day}-{MessageSent.Month}-{MessageSent.Year} ``");
+                    });
+            
+            commands.CreateCommand("uptime")
+                .Do(async (e) =>
+                    {
+                        CommandsUsed++;
+                        await e.Channel.SendMessage($"the bot is now {DateTime.Now - StartupTime} active");
+                    });
+            
+            commands.CreateCommand("roll") //create command
+                .Description("Rolls a die.") //add description, it will be shown when *help is used
+                .Parameter("number", ParameterType.Optional) //as an argument, we have a person we want to greet
+                .Do(async e =>
+                    {
+                        CommandsUsed++;
+                        if (e.Message.Text.Contains($"{commandPrefix}roll "))
+                        {
+                            if (e.Message.Text.ToLower() == $"{commandPrefix}roll 10")
+                            {
+                                int dice = rand.Next(1, 11);
+                                await e.Channel.SendMessage($"The ten-sided die rolled a... {dice}!");
+                            }
+                            else if (e.Message.Text.ToLower() == $"{commandPrefix}roll 1")                            await e.Channel.SendMessage($"The one-sided die rolled a... one! Wow, surprising!");                        else if (e.Message.Text.ToLower() == $"{commandPrefix}roll 2")                        {                            int dice = rand.Next(1, 3);                            await e.Channel.SendMessage($"The two-sided die rolled a... {dice}!");                        }                        else if (e.Message.Text.ToLower() == $"{commandPrefix}roll 3")                        {                            int dice = rand.Next(1, 4);                            await e.Channel.SendMessage($"The three-sided die rolled a... {dice}!");                        }                        else if (e.Message.Text.ToLower() == $"{commandPrefix}roll 4")                        {                            int dice = rand.Next(1, 5);                            await e.Channel.SendMessage($"The four-sided die rolled a... {dice}!");                        }                        else if (e.Message.Text.ToLower() == $"{commandPrefix}roll 5")                        {                            int dice = rand.Next(1, 6);                            await e.Channel.SendMessage($"The five-sided die rolled a... {dice}!");                        }                        else if (e.Message.Text.ToLower() == $"{commandPrefix}roll 6")                        {                            int dice = rand.Next(1, 7);                            await e.Channel.SendMessage($"The six-sided die rolled a... {dice}!");                        }                        else if (e.Message.Text.ToLower() == $"{commandPrefix}roll 7")                        {                            int dice = rand.Next(1, 8);                            await e.Channel.SendMessage($"The seven-sided die rolled a... {dice}!");                        }                        else if (e.Message.Text.ToLower() == $"{commandPrefix}roll 8")                        {                            int dice = rand.Next(1, 9);                            await e.Channel.SendMessage($"The eight-sided die rolled a... {dice}!");                        }                        else if (e.Message.Text.ToLower() == $"{commandPrefix}roll 9")                        {                            int dice = rand.Next(1, 10);                            await e.Channel.SendMessage($"The nine-sided die rolled a... {dice}!");                        }                        else if (e.Message.Text.ToLower() == $"{commandPrefix}roll 10")                        {                            int dice = rand.Next(1, 11);                            await e.Channel.SendMessage($"The nine-sided die rolled a... {dice}!");                        }                        else if (e.Message.Text.ToLower() == $"{commandPrefix}roll 11")                        {                            int dice = rand.Next(1, 12);                            await e.Channel.SendMessage($"The eleven-sided die rolled a... {dice}!");                        }                        else if (e.Message.Text.ToLower() == $"{commandPrefix}roll 12")                        {                            int dice = rand.Next(1, 13);                            await e.Channel.SendMessage($"The twelve-sided die rolled a... {dice}!");                        }                        else                            await e.Channel.SendMessage($"You must pick a number between 1 and 12!");                    }                    else                    {                        int dice = rand.Next(1, 7);                        await e.Channel.SendMessage($"The six-sided die rolled a... {dice}!");                    }                });
             commands.CreateCommand("gps")                .Description("The GPS rant™")                .Do(async e =>                {                    CommandsUsed++;                    if (gpsCooldownInt == 0)                    {                        gpsCooldownInt = 15;                        Timer gpsCooldownTimer = new Timer();                        gpsCooldownTimer.Elapsed += new ElapsedEventHandler(gpsCooldown);                        gpsCooldownTimer.Interval = 1000;                        gpsCooldownTimer.Enabled = true;                        await e.Channel.SendMessage($"ᵂᵃᶦᵗ, ᵗʰᶦˢ ᶦˢ ᵃ ˢᵉʳᶦᵒᵘˢ ᶦˢˢᵘᵉ⋅ ᴸᵉᵗ ᵐᵉ ʳᵃᶰᵗ ᵃᵇᵒᵘᵗ ᶦᵗ ᶠᵒʳ ᵃ ᵇᶦᵗ⋅ ﹡ᵃᶜʰᵉᵐ﹡⋅ \nᵂʰᵃᵗ ᶦˢ ᵃ ᴳᴾˢ﹖\nᵀʰᵉ ᴳᴾˢ ᶦˢ ᵃ ˢʸˢᵗᵉᵐ ᵗᵒ ᵉˢᵗᶦᵐᵃᵗᵉ ᶫᵒᶜᵃᵗᶦᵒᶰ ᵒᶰ ᵉᵃʳᵗʰ ᵇʸ ᵘˢᶦᶰᵍ ˢᶦᵍᶰᵃᶫˢ ᶠʳᵒᵐ ᵃ ˢᵉᵗ ᵒᶠ ᵒʳᵇᶦᵗᶦᶰᵍ ˢᵃᵗᵉᶫᶫᶦᵗᵉˢ… ᵒʳ ˢᵒ ᵗʰᵉʸ ˢᵃʸ⋅ ᴮᵘᵗ ʷʰᵃᵗ ᵗʰᵉʸ'ʳᵉ ᶰᵒᵗ ᵗᵉᶫᶫᶦᶰᵍ ᵘˢ ᶦˢ ᵗʰᵉ ʰᵃʳᵐ ᶦᵗ ᶜᵒᶰˢᵗᵃᶰᵗᶫʸ ᶜᵃᵘˢᵉˢ ʷᵒʳᶫᵈʷᶦᵈᵉ ᵉᵛᵉʳʸ ᵈᵃʸ⋅ ᴿᵉᶜᵉᶰᵗᶫʸ, ˢᵃᵗᵉᶫᶫᶦᵗᵉˢ ʰᵃᵛᵉ ᵇᵉᵉᶰ ᵇᵉᶦᶰᵍ ᵈᵉˢᶦᵍᶰᵉᵈ ˢᵒᶫᵉᶫʸ ᶠᵒʳ ᵗʰᵉ ᵖᵘʳᵖᵒˢᵉ ᵒᶠ ᵇᵒᵒˢᵗᶦᶰᵍ ᴳᴾˢ ᵖᵉʳᶠᵒʳᵐᵃᶰᶜᵉ, ᵇᵘᵗ ᵗʰᵉʸ ʰᵃᵛᵉ ᵇᵉᵉᶰ ᵇᵘᶦᶫᵗ ʷᶦᵗʰ ˢᵒ ᶫᶦᵗᵗᶫᵉ ᶜᵃʳᵉ ᵗʰᵃᵗ ᵗʰᵉ ᵖʳᵒᵇᶫᵉᵐˢ ᵃʳᵉ ᵉᵛᵉᶰ ʷᵒʳˢᵉ, ᵍᶦᵛᵉᶰ ᵗʰᵃᵗ ᵗʰᵉʸ ᵃʳᵉᶰ'ᵗ ʳᵉᶫʸᶦᶰᵍ ᵒᶰ ᶫᵃʳᵍᵉʳ ᵗʰᶦʳᵈ ᵖᵃʳᵗʸ ˢᵃᵗᵉᶫᶫᶦᵗᵉˢ ᵃᶰʸᵐᵒʳᵉ⋅ ᴺᵒᵗ ᵒᶰᶫʸ ᶦˢ ᵗʰᵉ ᶰᵃᵛᶦᵍᵃᵗᶦᵒᶰ ʷᵒʳˢᵉ, ᵇᵘᵗ ᶦᵗ’ˢ ᵃᶫˢᵒ ʰᵃʳᵐᶦᶰᵍ ᵒᵘʳ ᵒᵘᵗ⁻ᵒᶠ⁻ᵒʳᵇᶦᵗ ᵉᶰᵛᶦʳᵒᶰᵐᵉᶰᵗ⋅ ˢᵖᵃᶜᵉ ᵈᵉᵇʳᶦˢ ʰᵃˢ ᵇᵉᵉᶰ ᵃ ᵖʳᵒᵇᶫᵉᵐ ᵉᵛᵉʳ ˢᶦᶰᶜᵉ ʷᵉ ˢᵗᵃʳᵗᵉᵈ ᶫᵃᵘᶰᶜʰᶦᶰᵍ ˢᵃᵗᵉᶫᶫᶦᵗᵉˢ ᶦᶰᵗᵒ ˢᵖᵃᶜᵉ, ᵒᶠ ᶜᵒᵘʳˢᵉ, ᵇᵘᵗ⋅⋅ ᵂᶦᵗʰ ᶰᵉʷ ‘ʲᵃᶰᶦᵗᵒʳ’ ˢᵃᵗᵉᶫᶫᶦᵗᵉˢ ᵃᶰᵈ ᶫᵃˢᵉʳ ᵗᵉᶜʰᶰᵒᶫᵒᵍʸ, ʷᵉ’ᵛᵉ ᵇᵉᵉᶰ ᵃᵇᶫᵉ ᵗᵒ ᵏᵉᵉᵖ ᵗʰᵃᵗ ᵘᶰᵈᵉʳ ᶜᵒᶰᵗʳᵒᶫ⋅ ᴮᵘᵗ ʷʰᶦᶫᵉ ᵗʰᵉ ᵒᵛᵉʳᵃᶫᶫ ᵇᵘᶦᶫᵈ ᶠᵒʳ ˢᵃᵗᵉᶫᶫᶦᵗᵉˢ ᵃʳᵉ ᵘˢᵘᵃᶫᶫʸ ˢᵗᵘʳᵈʸ ᵉᶰᵒᵘᵍʰ ᵗᵒ ʷᶦᵗʰˢᵗᵃᶰᵈ ˢᵖᵃᶜᶦᵒᵘˢ ᶜᵒᶰᵈᶦᵗᶦᵒᶰˢ ᶠᵒʳ ᵃ ᶫᵉᶰᵍᵗʰʸ ᵃᵐᵒᵘᶰᵗ ᵒᶠ ᵗᶦᵐᵉ, ᵗʰᵉˢᵉ ᴳᴾˢ ˢᵃᵗᵉᶫᶫᶦᵗᵉˢ ᵃʳᵉ ʲᵘˢᵗ ᶫᵃᵘᶰᶜʰᶦᶰᵍ ᵖᶦᵉᶜᵉˢ ᵒᶠ ᵗʰᵉᶦʳ ᵒʷᶰ ᵈᵉᵇʳᶦˢ ᶦᶰᵗᵒ ˢᵖᵃᶜᵉ﹔ ˢᵗᶦᶫᶫ ᶦᶰ ᵒᵘʳ ᵒʳᵇᶦᵗ ᵇᵘᵗ ᵒᵘᵗ ᵒᶠ ᵒᵘʳ ᵃᵗᵐᵒˢᵖʰᵉʳᵉ, ʷʰᶦᶜʰ ᶦˢ ᵗᵃᵏᶦᶰᵍ ᵘˢ ᵃᵗ ᶫᵉᵃˢᵗ ᵗᵉᶰ ʸᵉᵃʳˢ ᵇᵃᶜᵏ ᶦᶰ ᵗᵉʳᵐˢ ᵒᶠ ˢᵖᵃᶜᵉ ᵗᵉᶜʰᶰᵒᶫᵒᵍʸ ᵈᵉᵛᵉᶫᵒᵖᵐᵉᶰᵗ⋅ ᴺᵒᵗ ᵒᶰᶫʸ ᵗʰᵃᵗ, ᵇᵘᵗ ᵗʰᵉ ᵐᵃᶦᶰ ᵖʳᵒᵇᶫᵉᵐ ʷᶦᵗʰ ˢᵖᵃᶜᵉ ᵈᵉᵇʳᶦˢ ᶦᶰ ᵍᵉᶰᵉʳᵃᶫ ᶦˢ ᵗʰᵃᵗ ᶦᵗ ᶦˢ ᶜᵃᵘˢᶦᶰᵍ ᵉˣᵗʳᵉᵐᵉ ᶫᵉᵛᵉᶫˢ ᵒᶠ ᶜᵒᶫᶫᶦˢᶦᵒᶰ ʷᶦᵗʰ ᵒᵗʰᵉʳ ᵛᶦᵗᵃᶫ ᵃᶰᵈ ᵉˣᵖᵉᶰˢᶦᵛᵉ ˢᵃᵗᵉᶫᶫᶦᵗᵉˢ ᵗʰᵃᵗ ᵃʳᵉ ᵘˢᵉᵈ ᶠᵒʳ ᶦᵐᵖᵒʳᵗᵃᶰᵗ ᵃᶰᵈ ᶦᶰ ᵍᵉᶰᵉʳᵃᶫ ʰᵃᵛᵉ ᵃ ˢʷᵉᶫᶫ ᶦᶰᵗᵉᶰᵗᶦᵒᶰ ᵍᵒᶦᶰᵍ ᵇʸ ᵗʰᵉᶦʳ ᵃᶜᵗᶦᵛᶦᵗᶦᵉˢ⋅ ᵀʰᵉʳᵉᶠᵒʳᵉ ᵗʰᵉˢᵉ ᴳᴾˢ ˢᵃᵗᵉᶫᶫᶦᵗᵉˢ, ʷʰᶦᶫᵉ ᵃᶫʳᵉᵃᵈʸ ᵇᵉᶦᶰᵍ ᵃᵇʰᵒʳʳᵉᶰᵗ ᵉᶰᵒᵘᵍʰ, ᵃʳᵉ ʳᵉᵈᵘᶜᶦᶰᵍ ᵗʰᵉ ᑫᵘᵃᶫᶦᵗʸ ᵒᶠ ˢᵃᵗᵉᶫᶫᶦᵗᵉˢ ᵃᶜᵗᵘᵃᶫᶫʸ ᵐᵃᵈᵉ ʷᶦᵗʰ ᵃ ˢᶦᶰᵍᶫᵉ ᵒᵘᶰᶜᵉ ᵒᶠ ᶦᶰᵗᵉᵍʳᶦᵗʸ﹗ ᵀʰᵉʸ ᵃʳᵉ ᵐᵃᵏᶦᶰᵍ ᶫᶦᶠᵉ ʷᵒʳˢᵉ ᶠᵒʳ ᵉᵛᵉʳʸ ˢᶦᶰᵍᶫᵉ ᵖᵉʳˢᵒᶰ ᵘˢᶦᶰᵍ ᵃ ˢᵉʳᵛᶦᶜᵉ ᵖʳᵒᵛᶦᵈᵉᵈ ᵇʸ ᵃᶰʸ ᵒᶠ ᵗʰᵉˢᵉ ˢᵃᵗᵉᶫᶫᶦᵗᵉˢ ᵗʰᵃᵗ ʷᵉʳᵉ ᶦᶰ ᶜᵒᶰᵗᵃᶜᵗ ʷᶦᵗʰ ᵗʰᵉᵐ⋅ ᴵ ˢᶦᵐᵖᶫᵉ ᶜᵃᶰ’ᵗ ᵘᶰᵈᵉʳˢᵗᵃᶰᵈ ʰᵒʷ ʷᵉ ᶜᵃᶰ ᵗᵒᶫᵉʳᵃᵗᵉ ᵗʰᵉˢᵉ ᵖᵉᵒᵖᶫᵉ⋅ ᴬᶫʳᶦᵍʰᵗ, ᶫᵉᵗ’ˢ ᵍᵉᵗ ᵇᵃᶜᵏ ᵗᵒ ᵗʰᵉ ᶰᶦᵗᵗʸ ᵍʳᶦᵗᵗʸ ᵒᶠ ᵗʰᶦˢ ᵗʰᶦᶰᵍ⋅ ᴬˢ ᴵ ʷᵃˢ ˢᵃʸᶦᶰᵍ ᵉᵃʳᶫᶦᵉʳ, ᶜᵒᶫᶫᶦˢᶦᵒᶰˢ ᵈᵉˢᵗʳᵒʸᵉᵈ ᵇᵒᵗʰ ˢᵃᵗᵉᶫᶫᶦᵗᵉˢ ᵃᶰᵈ ᵗʰᵒˢᵉ ᵗʰᵃᵗ ʰᵃᵈ ᶜʳᵉᵃᵗᵉᵈ ᵃ ᶠᶦᵉᶫᵈ ᵒᶠ ᵈᵉᵇʳᶦˢ ᵗʰᵃᵗ ᵇᵉᶜᵒᵐᵉ ᵃ ᵈᵃᶰᵍᵉʳ ᵗᵒ ᵒᵗʰᵉʳ […]");                    }                    else                        await e.Channel.SendMessage($"This command is currently on a cooldown. Please try again in {gpsCooldownInt} seconds.");                });
             discord.MessageReceived += async (s, e) =>            {                if (!e.User.IsBot)                {                    if (e.Message.Text.ToLower() == "lol")                    {                        await e.Channel.SendMessage("lol");                    }
                     if (e.Message.Text.ToLower() == "ja")                    {                        await e.Channel.SendMessage("nee");                    }
