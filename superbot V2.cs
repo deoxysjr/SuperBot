@@ -41,7 +41,7 @@ namespace Superbot1
 
             client.ExecuteAndWait(async () =>
             {
-                await client.Connect("MjY0MDUyNDE4NDExNDk1NDM0.C0a9lA.Di3gaOsVd2YEm5oQF6ufldPVdsU", TokenType.Bot);
+                await client.Connect("Token", TokenType.Bot);
                 client.SetGame("lol");
                 commands.CreateCommand("Playing")
                         .Alias(new string[] { "play" })
