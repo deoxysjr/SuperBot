@@ -729,29 +729,6 @@ namespace Superbot
                     {
                         await e.Channel.SendMessage("YUKI YUKI YUKI YUKI YUKI YUKI YUKI YUKI YUKI YUKI YUKI YUKI YUKI YUKI YUKI YUKI YUKI YUKI YUKI YUKI YUKI YUKI YUKI YUKI YUKI YUKI YUKI YUKI YUKI YUKI YUKI YUKI YUKI YUKI YUKI YUKI YUKI YUKI YUKI YUKI YUKI YUKI YUKI YUKI YUKI YUKI YUKI YUKI YUKI YUKI YUKI YUKI YUKI YUKI YUKI YUKI YUKI YUKI YUKI YUKI YUKI YUKI YUKI YUKI YUKI YUKI YUKI YUKI YUKI YUKI YUKI YUKI YUKI YUKI YUKI YUKI YUKI YUKI YUKI YUKI YUKI YUKI YUKI YUKI YUKI YUKI YUKI YUKI YUKI YUKIYUKI YUKI YUKI YUKI YUKI YUKI YUKI YUKI YUKI YUKI YUKI YUKI YUKI YUKI YUKI YUKI YUKI YUKI YUKI YUKI YUKI YUKI YUKI YUKI YUKI YUKI YUKI YUKI YUKI YUKI YUKI YUKI YUKI YUKI YUKI YUKI YUKI YUKI YUKI YUKI YUKI YUKI YUKI YUKI YUKI YUKI YUKI YUKI YUKI YUKI YUKI YUKI YUKI YUKI YUKI YUKI YUKI YUKI YUKI YUKI YUKI YUKI YUKI YUKI YUKI YUKI YUKI YUKI YUKI YUKI YUKI YUKI YUKI YUKI YUKI YUKI YUKI YUKI YUKI YUKI YUKI YUKI YUKI YUKI YUKI YUKI YUKI YUKI YUKI YUKIYUKI YUKI YUKI YUKI YUKI YUKI YUKI YUKI YUKI YUKI YUKI YUKI YUKI YUKI YUKI YUKI YUKI YUKI YUKI YUKI YUKI YUKI YUKI YUKI YUKI YUKI YUKI YUKI YUKI YUKI YUKI YUKI YUKI YUKI YUKI YUKI YUKI YUKI YUKI YUKI YUKI YUKI YUKI YUKI YUKI YUKI YUKI YUKI YUKI YUKI YUKI YUKI YUKI YUKI YUKI YUKI YUKI YUKI YUKI YUKI YUKI YUKI YUKI YUKI YUKI YUKI YUKI YUKI YUKI YUKI YUKI YUKI YUKI YUKI YUKI YUKI YUKI YUKI YUKI YUKI YUKI YUKI YUKI YUKI YUKI YUKI YUKI YUKI YUKI YUKIYUKI YUKI YUKI YUKI YUKI YUKI YUKI YUKI YUKI YUKI YUKI YUKI YUKI YUKI YUKI YUKI YUKI YUKI YUKI YUKI YUKI YUKI YUKI YUKI YUKI YUKI YUKI YUKI YUKI YUKI YUKI YUKI YUKI YUKI YUKI YUKI YUKI YUKI YUKI YUKI YUKI YUKI YUKI YUKI YUKI YUKI YUKI YUKI YUKI YUKI YUKI YUKI YUKI YUKI YUKI YUKI YUKI YUKI YUKI YUKI YUKI YUKI YUKI YUKI YUKI YUKI YUKI YUKI YUKI YUKI YUKI YUKI YUKI YUKI YUKI YUKI YUKI YUKI YUKI YUKI YUKI YUKI YUKI YUKI YUKI YUKI YUKI YUKI YUKI YUKI");
                     }
-
-                    if (e.Message.Text.ToLower() == "heil")
-                    {
-                        var heil = new List<string>();
-
-                        heil.Add(":no_mouth: :no_mouth: :100: :100: :no_mouth: :no_mouth: :no_mouth: :no_mouth: :no_mouth: :no_mouth:");
-                        heil.Add(":no_mouth: :no_mouth: :100: :100: :no_mouth: :no_mouth: :no_mouth: :no_mouth: :no_mouth: :no_mouth:");
-                        heil.Add(":no_mouth: :no_mouth: :100: :100: :no_mouth: :no_mouth: :100: :100: :100: :100:");
-                        heil.Add(":no_mouth: :no_mouth: :100: :100: :no_mouth: :no_mouth: :100: :100: :100: :100:");
-                        heil.Add(":no_mouth: :no_mouth: :no_mouth: :no_mouth: :no_mouth: :no_mouth: :no_mouth: :no_mouth: :no_mouth: :no_mouth:");
-                        heil.Add(":no_mouth: :no_mouth: :no_mouth: :no_mouth: :no_mouth: :no_mouth: :no_mouth: :no_mouth: :no_mouth: :no_mouth:");
-                        heil.Add(":100: :100: :100: :100: :no_mouth: :no_mouth: :100: :100: :no_mouth: :no_mouth:");
-                        heil.Add(":100: :100: :100: :100: :no_mouth: :no_mouth: :100: :100: :no_mouth: :no_mouth:");
-                        heil.Add(":no_mouth: :no_mouth: :no_mouth: :no_mouth: :no_mouth: :no_mouth: :100: :100: :no_mouth: :no_mouth:");
-                        heil.Add(":no_mouth: :no_mouth: :no_mouth: :no_mouth: :no_mouth: :no_mouth: :100: :100: :no_mouth: :no_mouth:");
-
-                        await e.Channel.SendMessage(string.Join("\n", heil));
-                    }
-
-                    if(e.Message.Text.ToLower() == "jews?")
-                    {
-                        await e.Channel.SendMessage("Do I smell gas?");
-                    }
                 }
             };
 
