@@ -25,4 +25,3 @@
 
                     await e.Channel.SendFile(@"C:\users\deoxysjr\Documents\Visual Studio 2015\Projects\Superbot\Superbot\bin\Debug\file\text.txt");
                 });
-
