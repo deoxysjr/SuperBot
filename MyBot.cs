@@ -526,54 +526,7 @@ namespace Superbot
                     CommandsUsed++;
                     var MessageSent = e.Message.Timestamp;
 
-                    if (MessageSent.Month == 1)
-                    {
-                        Month = "januari";
-                    }
-                    if (MessageSent.Month == 2)
-                    {
-                        Month = "feberuari";
-                    }
-                    if (MessageSent.Month == 3)
-                    {
-                        Month = "maart";
-                    }
-                    if (MessageSent.Month == 4)
-                    {
-                        Month = "april";
-                    }
-                    if (MessageSent.Month == 5)
-                    {
-                        Month = "mei";
-                    }
-                    if (MessageSent.Month == 6)
-                    {
-                        Month = "juni";
-                    }
-                    if (MessageSent.Month == 7)
-                    {
-                        Month = "juli";
-                    }
-                    if (MessageSent.Month == 8)
-                    {
-                        Month = "augustus";
-                    }
-                    if (MessageSent.Month == 9)
-                    {
-                        Month = "septemder";
-                    }
-                    if (MessageSent.Month == 10)
-                    {
-                        Month = "oktober";
-                    }
-                    if (MessageSent.Month == 11)
-                    {
-                        Month = "november";
-                    }
-                    if (MessageSent.Month == 12)
-                    {
-                        Month = "december";
-                    }
+                    month();
 
                     var time = new List<string>();
 
@@ -1173,6 +1126,58 @@ namespace Superbot
         private void CommandHelp()
         {
 
+        }
+        
+        private void month()
+        {
+            if (MessageSent.Month == 1)
+            {
+                Month = "januari";
+            }
+            if (MessageSent.Month == 2)
+            {
+                Month = "feberuari";
+            }
+            if (MessageSent.Month == 3)
+            {
+                Month = "maart";
+            }
+            if (MessageSent.Month == 4)
+            {
+                Month = "april";
+            }
+            if (MessageSent.Month == 5)
+            {
+                Month = "mei";
+            }
+            if (MessageSent.Month == 6)
+            {
+                Month = "juni";
+            }
+            if (MessageSent.Month == 7)
+            {
+                Month = "juli";
+            }
+            if (MessageSent.Month == 8)
+            {
+                Month = "augustus";
+            }
+            if (MessageSent.Month == 9)
+            {
+                Month = "septemder";
+            }
+            if (MessageSent.Month == 10)
+            {
+                Month = "oktober";
+            }
+            if (MessageSent.Month == 11)
+            {
+                Month = "november";
+            }
+            if (MessageSent.Month == 12)
+            {
+                Month = "december";
+            }
         }
 
         private void downloader_FinishedDownload(object sender, DownloadEventArgs e)
