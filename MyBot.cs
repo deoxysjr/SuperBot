@@ -16,7 +16,6 @@ namespace Superbot
     {
         public DiscordClient discord;
         public CommandService commands;
-        
 
         Random rand;
 
