@@ -25,6 +25,8 @@ namespace Superbot
 
         public static int gpsCooldownInt = 0;
         public static string Month = "januari";
+        public readonly string token = "token";
+        //public readonly string token = "token";
         public bool playcircle = true;
         public static int playnumber = 0;
 
