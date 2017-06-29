@@ -42,7 +42,7 @@ namespace SuperBot
 	      }
 	   });
 	      
-	private void commands()
+	private void Commands()
 	{
 		
 	}	
