@@ -14,10 +14,5 @@ namespace Superbot
         {
             MyBot bot1 = new MyBot();
         }
-
-        static void Main2(string[] args)
-        {
-            Super bot2 = new Super();
-        }
     }
 }
