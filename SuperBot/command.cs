@@ -768,6 +768,80 @@ namespace Superbot
                         await e.Channel.SendMessage(":warning: under construction sorry you can't enter :no_entry:");
                     }
                 });
+            commands.CreateCommand("spam")
+                .Do(async (e) =>
+                {
+                    var now = DateTime.Now;
+
+                    //var spam = new List<string>();
+
+                    for (long i = 0 + 1; i >= 0; i++)
+                    {
+                        if (i > 0)
+                        {
+                            //spam.Add($"[{rand.Next(1, 201)}]");
+                            await Task.Delay(1020);
+                            await e.Channel.SendMessage($"{i.ToString()}");
+                            Console.Write($"[{i.ToString()}], ");
+                        }
+                        else
+                        {
+                            //await e.Channel.SendMessage(string.Join(", ", spam));
+                            await e.Channel.SendMessage($"{DateTime.Now - now}");
+                            break;
+                        }
+                    }
+                });
+
+            commands.CreateCommand("random")
+                .Do(async (e) =>
+                {
+                    Console.ForegroundColor = ConsoleColor.Cyan;
+                    Console.WriteLine($"[{DateTime.Now.Hour}:{DateTime.Now.Minute}:{DateTime.Now.Second},{DateTime.Now.Millisecond}] [{e.User.Name}] Used %test");
+                    Console.ForegroundColor = ConsoleColor.White;
+                    CommandUsed.CommandAdd();
+                    var spam = new List<string>();
+
+                    int minval = int.Parse(e.Args[0]);
+                    int maxval = int.Parse(e.Args[1]);
+                    int amount = int.Parse(e.Args[2]);
+
+                    if (e.Args[0] == null)
+                        minval = 1;
+                    if (e.Args[1] == null)
+                        maxval = 10;
+                    if (e.Args[2] == null)
+                        amount = 1;
+
+                    if (minval > maxval)
+                    {
+                        await e.Channel.SendMessage("You are so stupid you can't even count, because your minimun number is higher then your maximun number");
+                        return;
+                    }
+
+                    if (amount > 399 || maxval > 9 && amount > 398)
+                    {
+                        await e.Channel.SendMessage("I can't sent that many");
+                        return;
+                    }
+
+                    spam.Add("```");
+
+                    for (long i = 0; i >= 0; i++)
+                    {
+
+                        if (i < amount)
+                        {
+                            spam.Add($"[{rand.Next(minval, maxval + 1)}], ");
+                        }
+                        else
+                        {
+                            spam.Add("```");
+                            await e.Channel.SendMessage(string.Join("", spam));
+                            break;
+                        }
+                    }
+                });
         }
     }
 }
