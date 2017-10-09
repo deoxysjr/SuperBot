@@ -1,21 +1,27 @@
 ﻿using System.IO;
+using System.Xml;
 
 namespace Superbot
 {
     class CommandUsed
     {
+
         public static void CommandAdd()
         {
-            int x;
+            XmlDocument xDoc = new XmlDocument();
+            xDoc.Load("./file/commandsused.xml");
+            string number = xDoc.SelectSingleNode("root/commands").InnerText;
+            xDoc.SelectSingleNode("root/commands").InnerText = (int.Parse(number) + 1).ToString();
+            xDoc.Save("./file/commandsused.xml");
+        }
 
-            using (TextReader reader = File.OpenText(@".\file\commandsused.txt"))
-            {
-                string text = reader.ReadLine();
-                string[] bits = text.Split(' ');
-                x = int.Parse(bits[0]);
-                x++;
-            }
-            File.WriteAllText(@".\file\commandsused.txt", x.ToString());
+        public static void ClearAdd(int v)
+        {
+            XmlDocument xDoc = new XmlDocument();
+            xDoc.Load("./file/commandsused.xml");
+            string number = xDoc.SelectSingleNode("root/clear").InnerText;
+            xDoc.SelectSingleNode("root/clear").InnerText = (int.Parse(number) + v).ToString();
+            xDoc.Save("./file/commandsused.xml");
         }
     }
 }

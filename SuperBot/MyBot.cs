@@ -11,6 +11,7 @@ using WrapYoutubeDl;
 using System.Threading.Tasks;
 using System.Xml;
 using System.Net.Http;
+using System.Diagnostics;
 
 namespace Superbot
 {
@@ -25,17 +26,23 @@ namespace Superbot
 
         public static int gpsCooldownInt = 0;
         public static string Month = "januari";
-        public readonly string token = "token";
-        //public readonly string token = "token";
         public bool playcircle = true;
         public static int playnumber = 0;
+        public static int spamnum = 0;
+        public static bool done = false;
+
+        //cpu en ram list
+        static List<float> AvailableCPU = new List<float>();
+        static List<float> AvailableRAM = new List<float>();
+
+        protected static PerformanceCounter cpuCounter;
+        protected static PerformanceCounter ramCounter;
+        static List<PerformanceCounter> cpuCounters = new List<PerformanceCounter>();
+        static List<PerformanceCounter> core = new List<PerformanceCounter>();
 
         //time usage
         public static DateTime MessageSent;
-        public static bool spday = false;
-        public static string specialday = "(day)";
-        public static string specialdaydescription = "(description)";
-        public static string dayofweek = "dinsdag";
+        public static string dayofweek;
 
         //StartUpTime
         public static DateTime StartupTime = DateTime.Now;
@@ -45,6 +52,7 @@ namespace Superbot
         public static Message playMessage;
         public static IAudioClient _vClient;
         public static string videoName = "Rick Astley - Never Gonna Give You Up";
+        
 
         public MyBot()
         {
@@ -70,9 +78,9 @@ namespace Superbot
                     char c = char.Parse(bits[0]);
                     x.PrefixChar = c;
                 }
-
+                
                 x.AllowMentionPrefix = true;
-                x.HelpMode = HelpMode.Disabled;
+                //x.HelpMode = HelpMode.Public;
             });
 
             commands = discord.GetService<CommandService>();
@@ -81,7 +89,13 @@ namespace Superbot
             Help();
             command.Commands(commands, discord);
             help.HelpCommands(commands, discord);
-
+            commandhelp.Commandhelp(discord);
+            som.Som(commands, discord);
+            colors.Colors.ColorCommands(commands, discord);
+            Weather.Weather.WeatherCommand(commands, discord, done);
+            animesearch.AnimeCommands(commands, discord);
+            Test.testCommand(commands, discord);
+			
             discord.ExecuteAndWait(async () =>
             {
                 while (true)
@@ -89,25 +103,16 @@ namespace Superbot
                     //await discord.Connect(token, TokenType.User);
                     await discord.Connect(token, TokenType.Bot);
                     var now = DateTime.Now;
-                    await Task.Delay(200);
+                    await Task.Delay(100);
                     Console.ForegroundColor = ConsoleColor.DarkGreen;
                     Console.WriteLine($"[{DateTime.Now.Hour}:{DateTime.Now.Minute}:{DateTime.Now.Second},{DateTime.Now.Millisecond}] Bot connected correctly");
                     Console.ForegroundColor = ConsoleColor.Blue;
                     Console.WriteLine($"[{DateTime.Now.Hour}:{DateTime.Now.Minute}:{DateTime.Now.Second},{DateTime.Now.Millisecond}] StartUp time is: {now - StartupTime}");
                     Console.ForegroundColor = ConsoleColor.White;
                     Console.Title = "Superbot.exe";
+                    discord.SetGame($"{DateTime.Now}");
+
                     await Task.Delay(20);
-                    if (Console.ReadLine() == "exit")
-                    {
-                        Console.ForegroundColor = ConsoleColor.Red;
-                        Console.WriteLine("Disconnecting");
-                        await Task.Delay(5000);
-                        await discord.Disconnect();
-                    }
-                    else
-                    {
-                        Console.WriteLine("nothing hapened");
-                    }
 
                     commands.CreateGroup("status", cgb =>
                     {
@@ -120,7 +125,7 @@ namespace Superbot
                         });
 
                         cgb.CreateCommand("Invisible")
-                        .Alias(new string[] { "inv" })
+                        .Alias(new string[] {"inv"})
                         .Do(async (e) =>
                         {
                             CommandUsed.CommandAdd();
@@ -129,7 +134,7 @@ namespace Superbot
                         });
 
                         cgb.CreateCommand("DoNotDisturb")
-                        .Alias(new string[] { "dnd" })
+                        .Alias(new string[] {"dnd"})
                         .Do(async (e) =>
                         {
                             CommandUsed.CommandAdd();
@@ -145,13 +150,9 @@ namespace Superbot
                             await e.Channel.SendMessage("You bot has been set to: **Online**");
                         });
                     });
-
-
                     break;
                 }
             });
-
-            PlayCircle.Playcircle(discord);
         }
 
         private void Commands()
@@ -162,9 +163,9 @@ namespace Superbot
                     CommandUsed.CommandAdd();
                     Console.ForegroundColor = ConsoleColor.Cyan;
                     Console.WriteLine($"[{DateTime.Now.Hour}:{DateTime.Now.Minute}:{DateTime.Now.Second},{DateTime.Now.Millisecond}] [{e.User.Name}] used the close command");
-                    if (e.User.Id == ID)
+                    if (e.User.Id == 245140333330038785)
                     {
-                        await e.Channel.SendMessage($"{e.User} Super Bot is stoping");
+                        await e.Channel.SendMessage($"{e.User} is stoping @superbot");
                         await e.Channel.SendMessage("confirm the stop in the Console");
                         Console.ForegroundColor = ConsoleColor.Black;
                         Console.BackgroundColor = ConsoleColor.White;
@@ -173,31 +174,16 @@ namespace Superbot
                         Console.ForegroundColor = ConsoleColor.White;
                         Console.BackgroundColor = ConsoleColor.Black;
                         var read = Console.ReadLine();
-                        if (read == "Yes")
+                        if (read == "Yes" || read == "yes" || read == "Y" || read == "y")
                         {
                             await e.Channel.SendMessage("The bot has been stoped");
                             Console.ForegroundColor = ConsoleColor.Red;
                             Console.WriteLine("The Bot has been Disconected");
                             await Task.Delay(5000);
                             await discord.Disconnect();
-                        }
-                        if (read == "yes")
-                        {
-                            await e.Channel.SendMessage("The bot has been stoped");
-                            Console.ForegroundColor = ConsoleColor.Red;
-                            Console.WriteLine("The Bot has been Disconected");
-                            await Task.Delay(5000);
-                            await discord.Disconnect();
-                        }
-
+                        }  
                         //return;
-                        if (read == "No")
-                        {
-                            await e.Channel.SendMessage("The bot has not been stoped");
-                            Console.WriteLine("haha I tryed");
-                            return;
-                        }
-                        if (read == "no")
+                        if (read == "No" || read == "no" || read == "N" || read == "n")
                         {
                             await e.Channel.SendMessage("The bot has not been stoped");
                             Console.WriteLine("haha I tryed");
@@ -222,7 +208,7 @@ namespace Superbot
             commands.CreateCommand("hard stop")
                 .Do(async (e) =>
                 {
-                    if (e.User.Id == ID)
+                    if (e.User.Id == 245140333330038785)
                     {
                         await e.Channel.SendMessage("The bot is reconnecting");
                         Console.ForegroundColor = ConsoleColor.Red;
@@ -237,24 +223,31 @@ namespace Superbot
                     }
                 });
 
+            
+
             discord.MessageReceived += async (s, e) =>
             {
                 if (!e.User.IsBot)
                 {
-                    if (e.Message.Text.ToLower().Contains("lol "))
-                    {
-                        await e.Channel.SendMessage("lol");
-                    }
-
-                    if (e.Message.Text.ToLower() == "ja")
+                    /*if (e.Message.Text.ToLower().Contains("ja"))
                     {
                         await e.Channel.SendMessage("nee");
                     }
 
-                    if (e.Message.Text.ToLower() == "nee")
+                    if (e.Message.Text.ToLower().Contains("fuck"))
+                    {
+                        await e.Channel.SendMessage("nee");
+                    }
+
+                    if (e.Message.Text.ToLower().Contains("nee"))
                     {
                         await e.Channel.SendMessage("ja");
-                    }
+                    }*/
+
+                    double num;
+                    bool Isnum = true;
+                    if (Isnum == double.TryParse(e.Message.Text.ToString(), out num))
+                        await e.Channel.SendMessage(e.User.Name + " you meant " + (double.Parse(e.Message.Text.ToString()) + 1).ToString());
 
                     if (e.Message.Text.ToLower().Contains("*triggerd*"))
                     {
@@ -266,10 +259,89 @@ namespace Superbot
                         await e.Channel.SendTTSMessage("YUKI YUKI YUKI YUKI YUKI YUKI YUKI YUKI YUKI YUKI YUKI YUKI YUKI YUKI YUKI YUKI YUKI YUKI YUKI YUKI YUKI YUKI YUKI YUKI YUKI YUKI YUKI YUKI YUKI YUKI YUKI YUKI YUKI YUKI YUKI YUKI YUKI YUKI YUKI YUKI YUKI YUKI YUKI YUKI YUKI YUKI YUKI YUKI YUKI YUKI YUKI YUKI YUKI YUKI YUKI YUKI YUKI YUKI YUKI YUKI YUKI YUKI YUKI YUKI YUKI YUKI YUKI YUKI YUKI YUKI YUKI YUKI YUKI YUKI YUKI YUKI YUKI YUKI YUKI YUKI YUKI YUKI YUKI YUKI YUKI YUKI YUKI YUKI YUKI YUKIYUKI YUKI YUKI YUKI YUKI YUKI YUKI YUKI YUKI YUKI YUKI YUKI YUKI YUKI YUKI YUKI YUKI YUKI YUKI YUKI YUKI YUKI YUKI YUKI YUKI YUKI YUKI YUKI YUKI YUKI YUKI YUKI YUKI YUKI YUKI YUKI YUKI YUKI YUKI YUKI YUKI YUKI YUKI YUKI YUKI YUKI YUKI YUKI YUKI YUKI YUKI YUKI YUKI YUKI YUKI YUKI YUKI YUKI YUKI YUKI YUKI YUKI YUKI YUKI YUKI YUKI YUKI YUKI YUKI YUKI YUKI YUKI YUKI YUKI YUKI YUKI YUKI YUKI YUKI YUKI YUKI YUKI YUKI YUKI YUKI YUKI YUKI YUKI YUKI YUKIYUKI YUKI YUKI YUKI YUKI YUKI YUKI YUKI YUKI YUKI YUKI YUKI YUKI YUKI YUKI YUKI YUKI YUKI YUKI YUKI YUKI YUKI YUKI YUKI YUKI YUKI YUKI YUKI YUKI YUKI YUKI YUKI YUKI YUKI YUKI YUKI YUKI YUKI YUKI YUKI YUKI YUKI YUKI YUKI YUKI YUKI YUKI YUKI YUKI YUKI YUKI YUKI YUKI YUKI YUKI YUKI YUKI YUKI YUKI YUKI YUKI YUKI YUKI");
                     }
 
-                    if (e.Message.Text.ToLower() == "1")
+                    if (e.Message.Text.ToLower().Contains("heil"))
+                    {
+                        var heil = new List<string>();
+
+                        heil.Add(":no_mouth: :no_mouth: :100: :100: :no_mouth: :no_mouth: :no_mouth: :no_mouth: :no_mouth: :no_mouth:");
+                        heil.Add(":no_mouth: :no_mouth: :100: :100: :no_mouth: :no_mouth: :no_mouth: :no_mouth: :no_mouth: :no_mouth:");
+                        heil.Add(":no_mouth: :no_mouth: :100: :100: :no_mouth: :no_mouth: :100: :100: :100: :100:");
+                        heil.Add(":no_mouth: :no_mouth: :100: :100: :no_mouth: :no_mouth: :100: :100: :100: :100:");
+                        heil.Add(":no_mouth: :no_mouth: :no_mouth: :no_mouth: :no_mouth: :no_mouth: :no_mouth: :no_mouth: :no_mouth: :no_mouth:");
+                        heil.Add(":no_mouth: :no_mouth: :no_mouth: :no_mouth: :no_mouth: :no_mouth: :no_mouth: :no_mouth: :no_mouth: :no_mouth:");
+                        heil.Add(":100: :100: :100: :100: :no_mouth: :no_mouth: :100: :100: :no_mouth: :no_mouth:");
+                        heil.Add(":100: :100: :100: :100: :no_mouth: :no_mouth: :100: :100: :no_mouth: :no_mouth:");
+                        heil.Add(":no_mouth: :no_mouth: :no_mouth: :no_mouth: :no_mouth: :no_mouth: :100: :100: :no_mouth: :no_mouth:");
+                        heil.Add(":no_mouth: :no_mouth: :no_mouth: :no_mouth: :no_mouth: :no_mouth: :100: :100: :no_mouth: :no_mouth:");
+
+                        await e.Channel.SendMessage(string.Join("\n", heil));
+                    }
+
+                    if(e.Message.Text.ToLower().Contains("jews?"))
+                    {
+                        await e.Channel.SendMessage("Do I smell gas?");
+                    }
+                    if(e.Message.Text.ToLower() =="1")
                     {
                         await e.Channel.SendMessage("2");
                         Console.WriteLine("haha");
+                    }
+                    if (e.Message.Text.ToLower().Contains("kanker") || e.Message.Text.ToLower().Contains("cancer"))
+                    {
+                        Message[] messagesToDelete;
+                        messagesToDelete = await e.Channel.DownloadMessages(1);
+                        await e.Channel.DeleteMessages(messagesToDelete);
+                        await e.Channel.SendMessage("You can't say that");
+                    }
+                    if (e.Message.Text.ToLower() == "rip")
+                    {
+                        await e.Channel.SendFile(@".\file\rip.jpg");
+                    }
+                    if (e.Message.Text.ToLower() == "status")
+                    {
+                        var list = new List<string>();
+                        var core = new List<float>();
+                        cpuCounter = new PerformanceCounter();
+                        cpuCounter.CategoryName = "Processor";
+                        cpuCounter.CounterName = "% Processor Time";
+                        cpuCounter.InstanceName = "_Total";
+
+                        ramCounter = new PerformanceCounter("Memory", "Available MBytes");
+
+                        int procCount = Environment.ProcessorCount;
+                        for (int i = 0; i < procCount; i++)
+                        {
+                            PerformanceCounter pc = new PerformanceCounter("Processor", "% Processor Time", i.ToString());
+                            cpuCounters.Add(pc);
+                        }
+
+                        //float cpu = cpuCounter.NextValue();
+                        float cpu = procCount;
+                        float sum = 0;
+                        foreach (PerformanceCounter a in cpuCounters)
+                        {
+                            sum = sum + a.NextValue();
+                            float sum1 = sum / (procCount);
+                            core.Add(sum1);
+                        }
+                        sum = sum / (procCount);
+                        float ram = 8000 - ramCounter.NextValue();
+                        list.Add("```ini");
+                        //list.Add($"??? {string.Join(",", cpuCounters)}");
+                        list.Add($"Cpu:         {sum}");
+                        list.Add($"core 0:      {core[0]}");
+                        list.Add($"core 1:      {core[1]}");
+                        list.Add($"core 2:      {core[2]}");
+                        list.Add($"core 3:      {core[3]}");
+                        list.Add($"Cores:       {cpu}");
+                        list.Add($"Ram used:    {ram}");
+                        list.Add("```");
+
+                        await e.Channel.SendMessage(string.Join("\n", list));
+                        await e.Channel.SendMessage(string.Format("CPU Value 1: {0}, cpu value 2: {1}, RAM value: {2}", sum, cpu, ram));
+                        sum = 0;
+                        procCount = 0;
+                        core.Clear();
                     }
                 }
             };
@@ -292,7 +364,7 @@ namespace Superbot
                 c.CreateCommand("2")
                 .Do(async (e) =>
                 {
-                    await e.Channel.SendMessage("");
+                    await e.Channel.SendMessage("666");
                 });
 
                 c.CreateCommand("3")
@@ -301,7 +373,7 @@ namespace Superbot
                     var path = @"./file/text.txt";
                     string line = File.ReadLines(path).Skip(3).Take(1).First();
 
-                    await e.Channel.SendMessage($"{ +1}");
+                    await e.Channel.SendMessage($"{line}");
                 });
 
                 c.CreateCommand("4")
@@ -314,9 +386,14 @@ namespace Superbot
                         int x = int.Parse(bits[0]);
                         await e.Channel.SendMessage($"i have read: {x}");
                     }
-
+                        
                 });
             });
+
+            /*discord.MessageReceived += (s, e) =>
+            {
+                Console.WriteLine($"{e.User} said: {e.Message.Text}");
+            };*/
 
             discord.MessageReceived += async (s, e) =>
             {
@@ -354,55 +431,55 @@ namespace Superbot
                         await e.Channel.SendMessage($"The bot is not currently in a voice channel.");
                     }
                 }
-                else if (e.Message.Text.StartsWith($"{BotPrefix}play"))
-                {
-                    if (e.Message.Text == $"{BotPrefix}play")
-                        await e.Channel.SendMessage($"Proper usage: `{BotPrefix}play [youtube video url]`");
-                    else
+                    else if (e.Message.Text.StartsWith($"{BotPrefix}play"))
                     {
-                        string rawinput = e.Message.RawText.Replace($"{BotPrefix}play ", ""); // Grab raw video input
-                        string filtering = rawinput.Replace("<", ""); // Remove '<' from input
-                        string input = filtering.Replace(">", ""); // Remove '>' from input
-                        playMessage = e.Message; // Set 'playMessage' ID
-
-                        var newFilename = Guid.NewGuid().ToString(); // Create file name
-                        var mp3OutputFolder = $"{Directory.GetCurrentDirectory()}\\videos\\"; // Grab video folder
-                        Directory.CreateDirectory(mp3OutputFolder); // Create video folder if not found
-
-                        var downloader = new AudioDownloader(input, newFilename, mp3OutputFolder);
-                        downloader.ProgressDownload += downloader_ProgressDownload;
-                        downloader.FinishedDownload += downloader_FinishedDownload;
-                        downloader.Download();
-
-                        videoName = downloader.OutputName; // Grab video name
-
-                        string filePath = $"{mp3OutputFolder}{newFilename}.mp3"; // Grab music file to play
-
-                        var channelCount = discord.GetService<AudioService>().Config.Channels; // Get the number of AudioChannels our AudioService has been configured to use.
-                        var OutFormat = new WaveFormat(48000, 16, channelCount); // Create a new Output Format, using the spec that Discord will accept, and with the number of channels that our client supports.
-                        using (var MP3Reader = new Mp3FileReader(filePath)) // Create a new Disposable MP3FileReader, to read audio from the filePath parameter
-                        using (var resampler = new MediaFoundationResampler(MP3Reader, OutFormat)) // Create a Disposable Resampler, which will convert the read MP3 data to PCM, using our Output Format
+                        if (e.Message.Text == $"{BotPrefix}play")
+                            await e.Channel.SendMessage($"Proper usage: `{BotPrefix}play [youtube video url]`");
+                        else
                         {
-                            resampler.ResamplerQuality = 60; // Set the quality of the resampler to 60, the highest quality
-                            int blockSize = OutFormat.AverageBytesPerSecond / 50; // Establish the size of our AudioBuffer
-                            byte[] buffer = new byte[blockSize];
-                            int byteCount;
+                            string rawinput = e.Message.RawText.Replace($"{BotPrefix}play ", ""); // Grab raw video input
+                            string filtering = rawinput.Replace("<", ""); // Remove '<' from input
+                            string input = filtering.Replace(">", ""); // Remove '>' from input
+                            playMessage = e.Message; // Set 'playMessage' ID
 
-                            while ((byteCount = resampler.Read(buffer, 0, blockSize)) > 0) // Read audio into our buffer, and keep a loop open while data is present
+                            var newFilename = Guid.NewGuid().ToString(); // Create file name
+                            var mp3OutputFolder = $"{Directory.GetCurrentDirectory()}\\videos\\"; // Grab video folder
+                            Directory.CreateDirectory(mp3OutputFolder); // Create video folder if not found
+
+                            var downloader = new AudioDownloader(input, newFilename, mp3OutputFolder);
+                            downloader.ProgressDownload += downloader_ProgressDownload;
+                            downloader.FinishedDownload += downloader_FinishedDownload;
+                            downloader.Download();
+
+                            videoName = downloader.OutputName; // Grab video name
+
+                            string filePath = $"{mp3OutputFolder}{newFilename}.mp3"; // Grab music file to play
+
+                            var channelCount = discord.GetService<AudioService>().Config.Channels; // Get the number of AudioChannels our AudioService has been configured to use.
+                            var OutFormat = new WaveFormat(48000, 16, channelCount); // Create a new Output Format, using the spec that Discord will accept, and with the number of channels that our client supports.
+                            using (var MP3Reader = new Mp3FileReader(filePath)) // Create a new Disposable MP3FileReader, to read audio from the filePath parameter
+                            using (var resampler = new MediaFoundationResampler(MP3Reader, OutFormat)) // Create a Disposable Resampler, which will convert the read MP3 data to PCM, using our Output Format
                             {
-                                if (byteCount < blockSize)
-                                {
-                                    // Incomplete Frame
-                                    for (int i = byteCount; i < blockSize; i++)
-                                        buffer[i] = 0;
-                                }
-                                _vClient.Send(buffer, 0, blockSize); // Send the buffer to Discord
-                            }
-                        }
+                                resampler.ResamplerQuality = 60; // Set the quality of the resampler to 60, the highest quality
+                                int blockSize = OutFormat.AverageBytesPerSecond / 50; // Establish the size of our AudioBuffer
+                                byte[] buffer = new byte[blockSize];
+                                int byteCount;
 
-                        _vClient.Wait(); // Waits for the currently playing sound file to end.
+                                while ((byteCount = resampler.Read(buffer, 0, blockSize)) > 0) // Read audio into our buffer, and keep a loop open while data is present
+                                {
+                                    if (byteCount < blockSize)
+                                    {
+                                        // Incomplete Frame
+                                        for (int i = byteCount; i < blockSize; i++)
+                                            buffer[i] = 0;
+                                    }
+                                    _vClient.Send(buffer, 0, blockSize); // Send the buffer to Discord
+                                }
+                            }
+
+                            _vClient.Wait(); // Waits for the currently playing sound file to end.
+                        }
                     }
-                }
             };
         }
 
@@ -458,26 +535,6 @@ namespace Superbot
             }
         }
 
-        public static void speciald()
-        {
-            var day = DateTime.Now.DayOfYear;
-            if (day == 1)
-            {
-                specialday = "New year";
-                specialdaydescription = "It's the beging of a new year";
-                spday = true;
-            }
-
-            if (day == 365)
-            {
-                specialday = "New year's eve";
-                specialdaydescription = "The day befor new year";
-                spday = true;
-            }
-
-
-        }
-
         public static void dayOfweek(CommandEventArgs e)
         {
             DateTime messagesent = e.Message.Timestamp;
@@ -506,11 +563,74 @@ namespace Superbot
             {
                 dayofweek = "Zaterdag";
             }
-            else if (day == "")
+            else if (day == "Sunday")
             {
                 dayofweek = "Zondag";
             }
+                    
+        }
 
+        public static async Task<string> searchAnime2(string tag)
+        {
+            tag = tag.Replace(" ", "_");
+            string website = $"https://yande.re/post.xml?limit=100&tags={tag}";
+            try
+            {
+                var toReturn = await Task.Run(async () =>
+                {
+                    using (var http = new HttpClient())
+                    {
+                        Utils.AddFakeHeaders(http);
+                        var data = await http.GetStreamAsync(website).ConfigureAwait(false);
+                        var doc = new XmlDocument();
+                        doc.Load(data);
+
+                        var node = doc.LastChild.ChildNodes[Utils.getRandInt(0, 100)];
+
+                        var url = node.Attributes["file_url"].Value;
+                        if (!url.StartsWith("http"))
+                            url = "https:" + url;
+                        return url;
+                    }
+                }).ConfigureAwait(false);
+                return toReturn;
+            }
+            catch (Exception)
+            {
+                return null;
+            }
+        }
+
+        public static async Task<string> searchAnime(string tag)
+        {
+
+            tag = tag.Replace(" ", "_");
+            string website = $"https://rule34.xxx/index.php?page=dapi&s=post&q=index&tags={tag}";
+            try
+            {
+                var toReturn = await Task.Run(async () =>
+                {
+                    using (var http = new HttpClient())
+                    {
+                        Utils.AddFakeHeaders(http);
+                        var data = await http.GetStreamAsync(website).ConfigureAwait(false);
+                        var doc = new XmlDocument();
+                        doc.Load(data);
+
+                        var node = doc.LastChild.ChildNodes[Utils.getRandInt(0, 100)];
+
+                        var url = node.Attributes["file_url"].Value;
+                        if (!url.StartsWith("http"))
+                            url = "https:" + url;
+                        return url;
+                    }
+                }).ConfigureAwait(false);
+                return toReturn;
+            }
+            catch (Exception)
+            {
+                return null;
+            }
         }
 
         private void downloader_FinishedDownload(object sender, DownloadEventArgs e)
@@ -541,7 +661,8 @@ namespace Superbot
             if (e.Severity == LogSeverity.Error)
             {
                 Console.ForegroundColor = ConsoleColor.Red;
-                Console.WriteLine($"[{time.Hour}:{time.Minute}:{time.Second},{time.Millisecond}] [{e.Source}] {e.Message}");
+                Console.WriteLine($"[{time.Hour}:{time.Minute}:{time.Second},{time.Millisecond}] [{e.Source}] {e.Message}" 
+                                + $"\n{e.Exception}");
                 Console.ForegroundColor = ConsoleColor.White;
             }
             if (e.Severity == LogSeverity.Warning)
@@ -556,7 +677,7 @@ namespace Superbot
                 Console.WriteLine($"[{time.Hour}:{time.Minute}:{time.Second},{time.Millisecond}] [{e.Source}] {e.Message}");
                 Console.ForegroundColor = ConsoleColor.White;
             }
-
+            
         }
     }
 }

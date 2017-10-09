@@ -143,6 +143,31 @@ namespace Superbot
                         await e.User.SendMessage(string.Join("\n", helpList));
                     });
 
+                cgb.CreateCommand("6")
+                    .Do(async (e) =>
+                    {
+                        Console.ForegroundColor = ConsoleColor.Cyan;
+                        Console.WriteLine($"[{DateTime.Now.Hour}:{DateTime.Now.Minute}:{DateTime.Now.Second},{DateTime.Now.Millisecond}] [{e.User.Name}] Used %help dm 6");
+                        Console.ForegroundColor = ConsoleColor.White;
+                        
+                        CommandUsed.CommandAdd();
+                        var helpList = new List<string>();
+
+                        helpList.Add("```");
+                        helpList.Add("This is a secret list of commands");
+                        helpList.Add(" ");
+                        helpList.Add("%oppai - sends boob pictures");
+                        helpList.Add("%hentai - sends hentai");
+                        helpList.Add("%yandere + tag - sends a yandere picture" +
+                            "tag is optional");
+                        helpList.Add("%rule34 + tag - sends a rule34 picture" +
+                            "tag is optional");
+                        helpList.Add("%itsnotrape - ?????");
+                        helpList.Add("```");
+
+                        await e.User.SendMessage(string.Join("\n", helpList));
+                    });
+
                 cgb.CreateCommand("all")
                     .Do(async (e) =>
                     {
@@ -329,6 +354,30 @@ namespace Superbot
                         helpList.Add("%gif - sends you a gif");
                         helpList.Add("%picture - sends a picture");
                         helpList.Add("%funny - sends a funny picture");
+                        helpList.Add("```");
+
+                        await e.Channel.SendMessage(string.Join("\n", helpList));
+                    });
+
+                cgb.CreateCommand("6")
+                    .Do(async (e) =>
+                    {
+                        Console.ForegroundColor = ConsoleColor.Cyan;
+                        Console.WriteLine($"[{DateTime.Now.Hour}:{DateTime.Now.Minute}:{DateTime.Now.Second},{DateTime.Now.Millisecond}] [{e.User.Name}] Used %help 6");
+                        Console.ForegroundColor = ConsoleColor.White;
+                        CommandUsed.CommandAdd();
+                        var helpList = new List<string>();
+
+                        helpList.Add("```");
+                        helpList.Add("This is a secret list of commands");
+                        helpList.Add(" ");
+                        helpList.Add("%oppai - sends boob pictures");
+                        helpList.Add("%hentai - sends hentai");
+                        helpList.Add("%yandere + tag - sends a yandere picture" +
+                            "tag is optional");
+                        helpList.Add("%rule34 + tag - sends a rule34 picture" +
+                            "tag is optional");
+                        helpList.Add("%itsnotrape - ?????");
                         helpList.Add("```");
 
                         await e.Channel.SendMessage(string.Join("\n", helpList));
