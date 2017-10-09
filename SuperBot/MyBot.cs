@@ -24,7 +24,6 @@ namespace Superbot
 
         public static string commandPrefix = "%";
 
-        public static int gpsCooldownInt = 0;
         public static string Month = "januari";
         public bool playcircle = true;
         public static int playnumber = 0;
@@ -642,13 +641,7 @@ namespace Superbot
         {
             //nothing
         }
-
-        public static void gpsCooldown(object source, ElapsedEventArgs e)
-        {
-            if (gpsCooldownInt > 0)
-                gpsCooldownInt--;
-        }
-
+	
         private void Log(object sender, LogMessageEventArgs e)
         {
             var time = DateTime.Now;
