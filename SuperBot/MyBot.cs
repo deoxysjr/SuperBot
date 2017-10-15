@@ -47,8 +47,6 @@ namespace Superbot
         public static DateTime StartupTime = DateTime.Now;
 
         //music
-        public static string BotPrefix = "&";
-        public static Message playMessage;
         public static IAudioClient _vClient;
         public static string videoName = "Rick Astley - Never Gonna Give You Up";
         
@@ -85,7 +83,6 @@ namespace Superbot
             commands = discord.GetService<CommandService>();
 
             Commands();
-            Help();
             command.Commands(commands, discord);
             help.HelpCommands(commands, discord);
             commandhelp.Commandhelp(discord);
@@ -94,6 +91,7 @@ namespace Superbot
             Weather.Weather.WeatherCommand(commands, discord, done);
             animesearch.AnimeCommands(commands, discord);
             Test.testCommand(commands, discord);
+	    Rank.levels(commands, discord, rand);
 			
             discord.ExecuteAndWait(async () =>
             {
@@ -344,12 +342,8 @@ namespace Superbot
                     }
                 }
             };
-
-        }
-
-        private void Help()
-        {
-            commands.CreateGroup("read", c =>
+	    
+			commands.CreateGroup("read", c =>
             {
                 c.CreateCommand("1")
                 .Do(async (e) =>
@@ -394,92 +388,6 @@ namespace Superbot
                 Console.WriteLine($"{e.User} said: {e.Message.Text}");
             };*/
 
-            discord.MessageReceived += async (s, e) =>
-            {
-                if (e.Message.Text == $"{BotPrefix}help")
-                {
-                    await e.Channel.SendMessage($"Available commands: {BotPrefix}help, {BotPrefix}info, {BotPrefix}summon, {BotPrefix}disconnect, {BotPrefix}play");
-                }
-                else if (e.Message.Text == $"{BotPrefix}info")
-                    await e.Channel.SendMessage($"Hiya! I'm SharpTunes, a Discord Music Bot written in C# using Discord.Net. You can see my list of commands with `{BotPrefix}help` and check out my source code at <https://github.com/Noahkiq/MusicBot>.");
-                else if (e.Message.Text == $"{BotPrefix}summon") // Detect if message is m!summon
-                {
-                    if (e.User.VoiceChannel == null) // Checks if 'userVC' is null
-                    {
-                        await e.Channel.SendMessage($"You must be in a voice channel to use this command!"); // Give error message if 'userVC' is null
-                    }
-                    else
-                    {
-                        string userVC = e.User.VoiceChannel.Name; // Define 'userVC' variable
-                        var voiceChannel = discord.FindServers(e.Server.Name).FirstOrDefault().FindChannels(userVC).FirstOrDefault(); // Grabs VC object
-                        _vClient = await discord.GetService<AudioService>() // We use GetService to find the AudioService that we installed earlier. In previous versions, this was equivelent to discord.Audio()
-                                .Join(voiceChannel); // Join the Voice Channel, and return the IAudioClient.
-                        await e.Channel.SendMessage($"👌");
-                    }
-                }
-                else if (e.Message.Text == $"{BotPrefix}disconnect")
-                {
-                    if (_vClient != null)
-                    {
-                        await _vClient.Disconnect();
-                        _vClient = null;
-                        await e.Channel.SendMessage($"👋");
-                    }
-                    else
-                    {
-                        await e.Channel.SendMessage($"The bot is not currently in a voice channel.");
-                    }
-                }
-                    else if (e.Message.Text.StartsWith($"{BotPrefix}play"))
-                    {
-                        if (e.Message.Text == $"{BotPrefix}play")
-                            await e.Channel.SendMessage($"Proper usage: `{BotPrefix}play [youtube video url]`");
-                        else
-                        {
-                            string rawinput = e.Message.RawText.Replace($"{BotPrefix}play ", ""); // Grab raw video input
-                            string filtering = rawinput.Replace("<", ""); // Remove '<' from input
-                            string input = filtering.Replace(">", ""); // Remove '>' from input
-                            playMessage = e.Message; // Set 'playMessage' ID
-
-                            var newFilename = Guid.NewGuid().ToString(); // Create file name
-                            var mp3OutputFolder = $"{Directory.GetCurrentDirectory()}\\videos\\"; // Grab video folder
-                            Directory.CreateDirectory(mp3OutputFolder); // Create video folder if not found
-
-                            var downloader = new AudioDownloader(input, newFilename, mp3OutputFolder);
-                            downloader.ProgressDownload += downloader_ProgressDownload;
-                            downloader.FinishedDownload += downloader_FinishedDownload;
-                            downloader.Download();
-
-                            videoName = downloader.OutputName; // Grab video name
-
-                            string filePath = $"{mp3OutputFolder}{newFilename}.mp3"; // Grab music file to play
-
-                            var channelCount = discord.GetService<AudioService>().Config.Channels; // Get the number of AudioChannels our AudioService has been configured to use.
-                            var OutFormat = new WaveFormat(48000, 16, channelCount); // Create a new Output Format, using the spec that Discord will accept, and with the number of channels that our client supports.
-                            using (var MP3Reader = new Mp3FileReader(filePath)) // Create a new Disposable MP3FileReader, to read audio from the filePath parameter
-                            using (var resampler = new MediaFoundationResampler(MP3Reader, OutFormat)) // Create a Disposable Resampler, which will convert the read MP3 data to PCM, using our Output Format
-                            {
-                                resampler.ResamplerQuality = 60; // Set the quality of the resampler to 60, the highest quality
-                                int blockSize = OutFormat.AverageBytesPerSecond / 50; // Establish the size of our AudioBuffer
-                                byte[] buffer = new byte[blockSize];
-                                int byteCount;
-
-                                while ((byteCount = resampler.Read(buffer, 0, blockSize)) > 0) // Read audio into our buffer, and keep a loop open while data is present
-                                {
-                                    if (byteCount < blockSize)
-                                    {
-                                        // Incomplete Frame
-                                        for (int i = byteCount; i < blockSize; i++)
-                                            buffer[i] = 0;
-                                    }
-                                    _vClient.Send(buffer, 0, blockSize); // Send the buffer to Discord
-                                }
-                            }
-
-                            _vClient.Wait(); // Waits for the currently playing sound file to end.
-                        }
-                    }
-            };
         }
 
         public static void month()
@@ -630,16 +538,6 @@ namespace Superbot
             {
                 return null;
             }
-        }
-
-        private void downloader_FinishedDownload(object sender, DownloadEventArgs e)
-        {
-            playMessage.Channel.SendMessage($"Finished downloading! Now playing {videoName}");
-        }
-
-        private void downloader_ProgressDownload(object sender, ProgressEventArgs e)
-        {
-            //nothing
         }
 	
         private void Log(object sender, LogMessageEventArgs e)
